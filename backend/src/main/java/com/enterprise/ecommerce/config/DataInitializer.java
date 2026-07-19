@@ -67,6 +67,7 @@ System.out.println("Roles OK");
 }
 
         // 3. Reuse or Create Users
+        System.out.println("Admin exists? " + userRepository.findByEmail("admin@ecomm.com").isPresent());
         User adminUser = userRepository.findByEmail("admin@ecomm.com")
                 .orElseGet(() -> createUser("admin@ecomm.com", "admin123", RoleName.ROLE_ADMIN));
         System.out.println("Admin loaded/created");
