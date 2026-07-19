@@ -2,26 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useCurrency } from '../context/CurrencyContext';
 import API from '../services/api';
-import { Search, Filter, ShoppingBag, Eye, Heart, Star, Award, CheckCircle, Tag, Clock, ArrowRight, ShieldCheck } from 'lucide-react';
+import { 
+  Search, Filter, ShoppingBag, Eye, Heart, Star, Award, 
+  CheckCircle, Tag, Clock, ArrowRight, ShieldCheck, 
+  Camera, MessageCircle, HelpCircle, Zap, Sparkles 
+} from 'lucide-react';
 
 export const Catalog: React.FC = () => {
   const { user } = useAuth();
   const { addItem } = useCart();
+  const { formatPrice } = useCurrency();
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
-  const [brands, setBrands] = useState<any[]>([]);
   const [frequentlyViewed, setFrequentlyViewed] = useState<any[]>([]);
 
   // Search & Filters state
   const [query, setQuery] = useState('');
   const [selectedCat, setSelectedCat] = useState('');
-  const [selectedBrand, setSelectedBrand] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [sortBy, setSortBy] = useState('id');
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+
+  // Alibaba active tabs
+  const [searchTab, setSearchTab] = useState<'products' | 'manufacturers' | 'worldwide' | 'ai'>('products');
 
   // Wishlist state
   const [wishlistIds, setWishlistIds] = useState<number[]>([]);
@@ -30,8 +37,6 @@ export const Catalog: React.FC = () => {
     try {
       const catRes = await API.get('/products/categories');
       setCategories(catRes.data);
-      const brandRes = await API.get('/products/brands');
-      setBrands(brandRes.data);
     } catch (err) {
       console.error(err);
     }
@@ -42,7 +47,6 @@ export const Catalog: React.FC = () => {
       let url = `/products?page=${page}&size=8&sortBy=${sortBy}&direction=DESC`;
       if (query) url += `&query=${encodeURIComponent(query)}`;
       if (selectedCat) url += `&categoryId=${selectedCat}`;
-      if (selectedBrand) url += `&brandId=${selectedBrand}`;
       if (minPrice) url += `&minPrice=${minPrice}`;
       if (maxPrice) url += `&maxPrice=${maxPrice}`;
 
@@ -81,7 +85,7 @@ export const Catalog: React.FC = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [query, selectedCat, selectedBrand, minPrice, maxPrice, sortBy, page]);
+  }, [query, selectedCat, minPrice, maxPrice, sortBy, page]);
 
   useEffect(() => {
     if (user) {
@@ -108,100 +112,136 @@ export const Catalog: React.FC = () => {
   };
 
   return (
-    <div className="space-y-10 px-4 py-8">
-      {/* Search Header Banner */}
-      <div className="glass p-8 rounded-3xl text-center space-y-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 blur-xl pointer-events-none" />
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Enterprise Retail Hub</h1>
-        <p className="text-slate-400 max-w-xl mx-auto">Explore high-quality products sourced directly from manufacturers, managed by smart warehouses</p>
-        <div className="max-w-xl mx-auto relative mt-6">
-          <Search className="absolute left-3.5 top-3.5 w-5 h-5 text-slate-500" />
+    <div className="space-y-8 px-4 py-6 relative">
+      {/* 1. Alibaba Hero Header Search Banner */}
+      <div className="bg-slate-900/40 p-8 rounded-3xl text-center space-y-6 relative overflow-hidden border border-slate-800">
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-amber-500/5 blur-xl pointer-events-none" />
+        
+        {/* Search Mode Tabs */}
+        <div className="flex justify-center space-x-8 text-sm font-bold border-b border-slate-800 pb-3 max-w-md mx-auto">
+          <button 
+            onClick={() => setSearchTab('ai')}
+            className={`flex items-center gap-1 transition ${searchTab === 'ai' ? 'text-orange-500' : 'text-slate-400 hover:text-white'}`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-orange-400" /> AI Mode
+          </button>
+          <button 
+            onClick={() => setSearchTab('products')}
+            className={`transition ${searchTab === 'products' ? 'text-orange-500 border-b-2 border-orange-500 pb-2.5 -mb-3' : 'text-slate-400 hover:text-white'}`}
+          >
+            Products
+          </button>
+          <button 
+            onClick={() => setSearchTab('manufacturers')}
+            className={`transition ${searchTab === 'manufacturers' ? 'text-orange-500' : 'text-slate-400 hover:text-white'}`}
+          >
+            Manufacturers
+          </button>
+          <button 
+            onClick={() => setSearchTab('worldwide')}
+            className={`transition ${searchTab === 'worldwide' ? 'text-orange-500' : 'text-slate-400 hover:text-white'}`}
+          >
+            Worldwide
+          </button>
+        </div>
+
+        {/* Rounded Orange Search Bar */}
+        <div className="max-w-3xl mx-auto relative mt-4 border-2 border-orange-500 rounded-full bg-slate-950 p-1 flex items-center shadow-lg shadow-orange-500/5">
+          <div className="flex items-center space-x-2 pl-4 text-slate-400 text-sm">
+            <Search className="w-5 h-5 text-slate-500" />
+            <span className="text-xs text-slate-600">|</span>
+          </div>
+          
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-slate-900 border border-slate-700 rounded-full pl-12 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 shadow-md"
-            placeholder="Search products, brands, barcodes..."
+            className="w-full bg-transparent border-none pl-2 pr-12 py-2.5 text-white placeholder-slate-500 focus:outline-none text-sm"
+            placeholder="Search matching products, brand models, barcodes..."
           />
+
+          {/* Camera Mock Icon */}
+          <div className="absolute right-36 cursor-pointer text-slate-400 hover:text-white transition flex items-center gap-1.5 text-xs font-semibold pr-3 border-r border-slate-800">
+            <Camera className="w-4.5 h-4.5" />
+            <span className="hidden sm:inline">Image Search</span>
+          </div>
+
+          <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-7 py-2.5 rounded-full text-sm transition flex items-center gap-1 ml-auto">
+            <Search className="w-4 h-4" /> Search
+          </button>
         </div>
+
+        <p className="text-slate-400 text-xs mt-2">Welcome to E-Comm Platform. Register as Manufacturer, Supplier, or Buyer.</p>
       </div>
 
-      {/* Catalog Split Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Filters Sidebar */}
-        <div className="glass p-6 rounded-2xl h-fit space-y-6">
-          <div className="flex items-center gap-2 border-b border-slate-800 pb-4 text-purple-400 font-bold uppercase tracking-wider text-sm">
-            <Filter className="w-4 h-4" /> Filters Engine
+      {/* 2. Three Column Layout: Sidebar Category + Products + Widgets */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        {/* Left Side Category Navigation */}
+        <div className="lg:col-span-3 glass p-5 rounded-2xl h-fit space-y-6">
+          <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-3">
+            <Filter className="w-4 h-4 text-orange-500" /> All Categories
+          </h3>
+          <div className="space-y-3.5 text-xs text-slate-400 font-semibold">
+            {categories.map((c) => (
+              <div 
+                key={c.id}
+                onClick={() => setSelectedCat(selectedCat === c.id.toString() ? '' : c.id.toString())}
+                className={`flex justify-between items-center p-2.5 rounded-lg cursor-pointer transition ${
+                  selectedCat === c.id.toString() ? 'bg-orange-500/10 text-orange-400' : 'hover:bg-slate-800/40 hover:text-white'
+                }`}
+              >
+                <span>{c.name}</span>
+                <span className="text-slate-600 font-bold">&rarr;</span>
+              </div>
+            ))}
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Category</label>
-            <select
-              value={selectedCat}
-              onChange={(e) => setSelectedCat(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-sm"
-            >
-              <option value="">All Categories</option>
-              {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Brand</label>
-            <select
-              value={selectedBrand}
-              onChange={(e) => setSelectedBrand(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-sm"
-            >
-              <option value="">All Brands</option>
-              {brands.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Price Bounds</label>
+          {/* Price Bounds Filter */}
+          <div className="border-t border-slate-800 pt-5 space-y-4">
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wide">Filter Price Bounds</label>
             <div className="grid grid-cols-2 gap-2">
               <input
                 type="number"
                 placeholder="Min"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
-                className="bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-sm"
+                className="bg-slate-950 border border-slate-800 rounded p-2 text-xs text-white"
               />
               <input
                 type="number"
                 placeholder="Max"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
-                className="bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-sm"
+                className="bg-slate-950 border border-slate-800 rounded p-2 text-xs text-white"
               />
             </div>
           </div>
+        </div>
 
-          <div>
-            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Sorting</label>
+        {/* Center Main Catalog Grid */}
+        <div className="lg:col-span-6 space-y-8">
+          <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Found {products.length} Products</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-sm"
+              className="bg-slate-900 border border-slate-800 rounded text-xs text-white p-1"
             >
-              <option value="id">Relevance</option>
-              <option value="price">Price</option>
-              <option value="name">Product Name</option>
+              <option value="id">Sort: Relevance</option>
+              <option value="price">Sort: Price</option>
+              <option value="name">Sort: Name</option>
             </select>
           </div>
-        </div>
 
-        {/* Catalog Grid */}
-        <div className="lg:col-span-3 space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {products.map((p) => (
-              <div key={p.id} className="glass rounded-xl overflow-hidden shadow-lg hover:shadow-purple-500/5 hover:-translate-y-1 transition duration-200 flex flex-col justify-between">
+              <div key={p.id} className="glass rounded-2xl overflow-hidden hover:border-orange-500/30 hover:shadow-orange-500/5 transition flex flex-col justify-between">
                 <div className="relative">
                   <img
                     src={p.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'}
                     alt={p.name}
-                    className="w-full h-48 object-cover border-b border-slate-800"
+                    className="w-full h-44 object-cover border-b border-slate-800"
                   />
                   <button
                     onClick={() => toggleWishlist(p.id)}
@@ -209,20 +249,20 @@ export const Catalog: React.FC = () => {
                       wishlistIds.includes(p.id) ? 'text-rose-500' : 'text-slate-400'
                     }`}
                   >
-                    <Heart className="w-5 h-5 fill-current" />
+                    <Heart className="w-4 h-4 fill-current" />
                   </button>
                 </div>
-                <div className="p-5 flex-grow flex flex-col justify-between space-y-3">
+                <div className="p-4 flex-grow flex flex-col justify-between space-y-3">
                   <div>
-                    <span className="text-xs font-bold text-purple-400 uppercase tracking-wide">{p.categoryName}</span>
-                    <h3 className="font-bold text-lg text-white hover:text-purple-400 transition cursor-pointer mt-1">
+                    <span className="text-[10px] font-bold text-orange-400 uppercase tracking-wide">{p.categoryName}</span>
+                    <h3 className="font-extrabold text-base text-white hover:text-orange-400 transition cursor-pointer mt-1">
                       <Link to={`/product/${p.id}`}>{p.name}</Link>
                     </h3>
                     <p className="text-slate-400 text-xs line-clamp-2 mt-1">{p.description}</p>
                   </div>
-                  <div className="flex items-center justify-between pt-3 border-t border-slate-800">
-                    <span className="text-xl font-black text-white">${p.price.toFixed(2)}</span>
-                    <span className={`text-xs px-2 py-1 rounded font-semibold ${
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+                    <span className="text-lg font-black text-white">{formatPrice(p.price)}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wider ${
                       p.stockLevel > 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
                     }`}>
                       {p.stockLevel > 0 ? 'In Stock' : 'Out of Stock'}
@@ -232,16 +272,16 @@ export const Catalog: React.FC = () => {
                 {p.stockLevel > 0 && user?.customerId ? (
                   <button
                     onClick={() => addItem(p.id, 1)}
-                    className="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold transition flex items-center justify-center gap-2 text-sm"
+                    className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold transition flex items-center justify-center gap-1.5 text-xs"
                   >
-                    <ShoppingBag className="w-4 h-4" /> Add To Shopping Cart
+                    <ShoppingBag className="w-4 h-4" /> Add to Cart
                   </button>
                 ) : (
                   <Link
                     to={`/product/${p.id}`}
-                    className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold transition text-center text-sm"
+                    className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold transition text-center text-xs"
                   >
-                    View Product Details
+                    View Details
                   </Link>
                 )}
               </div>
@@ -254,47 +294,98 @@ export const Catalog: React.FC = () => {
               <button
                 disabled={page === 0}
                 onClick={() => setPage(page - 1)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-white text-sm font-semibold disabled:opacity-50 transition"
+                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-white text-xs font-semibold disabled:opacity-50 transition"
               >
-                Previous
+                Prev
               </button>
-              <span className="text-slate-400 text-sm">Page {page + 1} of {totalPages}</span>
+              <span className="text-slate-500 text-xs">Page {page + 1} of {totalPages}</span>
               <button
                 disabled={page >= totalPages - 1}
                 onClick={() => setPage(page + 1)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-white text-sm font-semibold disabled:opacity-50 transition"
+                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-white text-xs font-semibold disabled:opacity-50 transition"
               >
                 Next
               </button>
             </div>
           )}
         </div>
+
+        {/* Right Side Widgets: Frequently Searched / Banners */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* Frequently searched widget */}
+          <div className="glass p-5 rounded-2xl space-y-4">
+            <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wide border-b border-slate-800 pb-2">Frequently Searched</h3>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-orange-500 font-bold"><Zap className="w-5 h-5" /></div>
+                <div>
+                  <span className="text-xs font-bold text-white block">Smart Watches</span>
+                  <span className="text-[10px] text-slate-500">12k+ daily requests</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-cyan-500 font-bold"><Award className="w-5 h-5" /></div>
+                <div>
+                  <span className="text-xs font-bold text-white block">Acoustic Earbuds</span>
+                  <span className="text-[10px] text-slate-500">8k+ daily requests</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Hot Picks Banner widget */}
+          <div className="relative rounded-2xl overflow-hidden h-64 border border-slate-800 flex flex-col justify-end p-5">
+            <img 
+              src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600" 
+              alt="Promo Banner" 
+              className="absolute inset-0 w-full h-full object-cover brightness-50"
+            />
+            <div className="relative z-10 space-y-2">
+              <span className="text-[10px] bg-orange-500 text-white font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">Hot Picks</span>
+              <h4 className="font-extrabold text-lg text-white">Classic Apparel Fashion</h4>
+              <p className="text-xs text-slate-300">Up to 20% off with promo coupon codes.</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Frequently Viewed Row */}
       {frequentlyViewed.length > 0 && (
         <div className="glass p-6 rounded-2xl space-y-4">
-          <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-            <Eye className="w-5 h-5 text-indigo-400" /> Frequently Viewed Items
+          <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
+            <Eye className="w-4 h-4 text-orange-500" /> Frequently Viewed Items
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {frequentlyViewed.map((fv) => (
-              <div key={fv.id} className="glass-light p-4 rounded-xl flex items-center space-x-4">
+              <div key={fv.id} className="glass-light p-3 rounded-xl flex items-center space-x-3 hover:border-orange-500/20 transition">
                 <img
                   src={fv.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'}
                   alt={fv.name}
-                  className="w-16 h-16 object-cover rounded-lg border border-slate-700"
+                  className="w-14 h-14 object-cover rounded-lg border border-slate-800"
                 />
                 <div className="min-w-0 flex-grow">
-                  <Link to={`/product/${fv.id}`} className="block text-sm font-bold text-white hover:text-indigo-400 truncate">{fv.name}</Link>
-                  <span className="text-xs text-slate-400">{fv.brandName}</span>
-                  <span className="block text-indigo-400 font-bold text-sm mt-0.5">${fv.price.toFixed(2)}</span>
+                  <Link to={`/product/${fv.id}`} className="block text-xs font-bold text-white hover:text-orange-500 truncate">{fv.name}</Link>
+                  <span className="text-[10px] text-slate-500 block truncate">{fv.brandName}</span>
+                  <span className="text-orange-400 font-bold text-xs block mt-0.5">{formatPrice(fv.price)}</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
       )}
+
+      {/* Floating Alibaba Assistance Side panel */}
+      <div className="fixed bottom-6 right-6 flex flex-col space-y-3 z-50">
+        <button 
+          onClick={() => alert("Alibaba Assistant: Hello! How can I help you negotiate with suppliers today?")}
+          className="p-3.5 bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-xl transition hover:scale-105"
+        >
+          <MessageCircle className="w-5 h-5" />
+        </button>
+        <button className="p-3.5 bg-slate-850 text-slate-300 hover:text-white rounded-full shadow-xl border border-slate-800 transition">
+          <HelpCircle className="w-5 h-5" />
+        </button>
+      </div>
     </div>
   );
 };
@@ -302,6 +393,7 @@ export const Catalog: React.FC = () => {
 export const ProductDetails: React.FC = () => {
   const { user } = useAuth();
   const { addItem } = useCart();
+  const { formatPrice } = useCurrency();
   const [product, setProduct] = useState<any>(null);
   const [barcodeImg, setBarcodeImg] = useState('');
   const [qrcodeImg, setQrcodeImg] = useState('');
@@ -315,7 +407,6 @@ export const ProductDetails: React.FC = () => {
   const [id, setId] = useState<number>(0);
 
   useEffect(() => {
-    // Resolve ID from path parameter
     const pathParts = window.location.pathname.split('/');
     const prodId = Number(pathParts[pathParts.length - 1]);
     if (prodId) {
@@ -365,62 +456,62 @@ export const ProductDetails: React.FC = () => {
     }
   };
 
-  if (!product) return <div className="text-center p-20 text-slate-400">Loading Product File...</div>;
+  if (!product) return <div className="text-center p-20 text-slate-400">Loading Product details...</div>;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12 space-y-10">
+    <div className="max-w-5xl mx-auto px-4 py-8 space-y-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 glass p-8 rounded-3xl">
         {/* Product Image */}
         <div>
           <img
             src={product.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'}
             alt={product.name}
-            className="w-full h-96 object-cover rounded-2xl border border-slate-700 shadow-md"
+            className="w-full h-96 object-cover rounded-2xl border border-slate-800 shadow-md"
           />
         </div>
 
         {/* Product Info */}
         <div className="space-y-6">
           <div className="space-y-2">
-            <span className="text-xs font-bold text-purple-400 uppercase tracking-widest bg-purple-500/10 px-3 py-1 rounded-full">{product.categoryName}</span>
+            <span className="text-[10px] font-bold text-orange-400 uppercase tracking-widest bg-orange-500/10 px-3 py-1 rounded-full">{product.categoryName}</span>
             <h1 className="text-3xl font-extrabold text-white mt-2">{product.name}</h1>
-            <p className="text-slate-400 text-sm">{product.brandName} &bull; SKU: <code className="text-purple-400 font-bold">{product.sku}</code></p>
+            <p className="text-slate-400 text-xs">{product.brandName} &bull; SKU: <code className="text-orange-400 font-bold">{product.sku}</code></p>
           </div>
 
           <div className="flex items-center gap-2 text-yellow-400">
-            <Star className="w-5 h-5 fill-current" />
-            <span className="font-bold">{avgRating ? avgRating.toFixed(1) : 'No Rating'}</span>
-            <span className="text-slate-500 text-sm">({reviews.length} reviews)</span>
+            <Star className="w-4 h-4 fill-current" />
+            <span className="font-bold text-sm">{avgRating ? avgRating.toFixed(1) : 'No Rating'}</span>
+            <span className="text-slate-500 text-xs">({reviews.length} reviews)</span>
           </div>
 
           <p className="text-slate-300 leading-relaxed text-sm">{product.description}</p>
 
-          <div className="flex items-center justify-between border-y border-slate-800 py-4">
+          <div className="flex items-center justify-between border-y border-slate-850 py-4">
             <div>
-              <span className="text-slate-400 text-xs block">MSRP PRICE</span>
-              <span className="text-3xl font-black text-white">${product.price.toFixed(2)}</span>
+              <span className="text-slate-500 text-[10px] block font-bold uppercase tracking-wider">Converted Price</span>
+              <span className="text-3xl font-black text-white">{formatPrice(product.price)}</span>
             </div>
             {product.stockLevel > 0 ? (
               <button
                 onClick={() => addItem(product.id, 1)}
-                className="px-8 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl transition flex items-center gap-2"
+                className="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl transition flex items-center gap-2 text-sm shadow-md"
               >
-                <ShoppingBag className="w-5 h-5" /> Add to Cart
+                <ShoppingBag className="w-4 h-4" /> Add to Cart
               </button>
             ) : (
-              <span className="px-6 py-2.5 bg-rose-500/10 text-rose-400 rounded-lg font-bold border border-rose-500/20">Sold Out</span>
+              <span className="px-6 py-2.5 bg-rose-500/10 text-rose-400 rounded-lg font-bold border border-rose-500/20 text-xs">Sold Out</span>
             )}
           </div>
 
           {/* Barcode details */}
           <div className="grid grid-cols-2 gap-4">
             <div className="glass-light p-4 rounded-xl text-center space-y-2">
-              <span className="text-xs text-slate-400 block font-bold uppercase tracking-wider">1D SKU Barcode</span>
-              {barcodeImg ? <img src={barcodeImg} alt="Barcode" className="mx-auto h-12" /> : <div className="text-xs text-slate-600">Generating...</div>}
+              <span className="text-[10px] text-slate-500 block font-bold uppercase tracking-wider">1D SKU Barcode</span>
+              {barcodeImg ? <img src={barcodeImg} alt="Barcode" className="mx-auto h-12" /> : <div className="text-xs text-slate-650">Generating...</div>}
             </div>
             <div className="glass-light p-4 rounded-xl text-center space-y-2">
-              <span className="text-xs text-slate-400 block font-bold uppercase tracking-wider">QR Code Locator</span>
-              {qrcodeImg ? <img src={qrcodeImg} alt="QR Code" className="mx-auto h-16" /> : <div className="text-xs text-slate-600">Generating...</div>}
+              <span className="text-[10px] text-slate-500 block font-bold uppercase tracking-wider">QR Code Locator</span>
+              {qrcodeImg ? <img src={qrcodeImg} alt="QR Code" className="mx-auto h-16" /> : <div className="text-xs text-slate-650">Generating...</div>}
             </div>
           </div>
         </div>
@@ -430,16 +521,16 @@ export const ProductDetails: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Write Review Form */}
         <div className="glass p-6 rounded-2xl h-fit space-y-4 col-span-1">
-          <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
-            <Award className="w-5 h-5 text-purple-400" /> Share Feedback
+          <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
+            <Award className="w-4 h-4 text-orange-400" /> Share Feedback
           </h3>
           <form onSubmit={submitReview} className="space-y-4">
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Rating</label>
+              <label className="block text-xs font-bold text-slate-400 mb-1">Rating Stars</label>
               <select
                 value={rating}
                 onChange={(e) => setRating(Number(e.target.value))}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-sm"
+                className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-white text-xs"
               >
                 <option value="5">5 Stars (Excellent)</option>
                 <option value="4">4 Stars (Very Good)</option>
@@ -449,17 +540,17 @@ export const ProductDetails: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Review text</label>
+              <label className="block text-xs font-bold text-slate-400 mb-1">Review Message</label>
               <textarea
                 value={reviewText}
                 onChange={(e) => setReviewText(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-sm h-24 focus:outline-none"
+                className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-white text-xs h-24 focus:outline-none"
                 placeholder="Share your experience with this product..."
               />
             </div>
             <button
               type="submit"
-              className="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition"
+              className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-lg text-xs transition"
             >
               Post Review
             </button>
@@ -468,20 +559,20 @@ export const ProductDetails: React.FC = () => {
 
         {/* Reviews List */}
         <div className="glass p-6 rounded-2xl col-span-2 space-y-4">
-          <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-3">Approved Customer Reviews ({reviews.length})</h3>
+          <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3">Approved Customer Reviews ({reviews.length})</h3>
           {reviews.length === 0 ? (
-            <p className="text-slate-500 text-sm">No reviewed entries found for this SKU.</p>
+            <p className="text-slate-500 text-xs">No reviewed entries found for this SKU.</p>
           ) : (
             <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
               {reviews.map((r) => (
                 <div key={r.id} className="glass-light p-4 rounded-xl space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold text-slate-300">
+                    <span className="text-xs font-bold text-slate-300">
                       {r.customer.firstName} {r.customer.lastName.substring(0, 1)}.
                     </span>
                     <div className="flex text-yellow-400">
                       {Array.from({ length: r.rating }).map((_, i) => (
-                        <Star key={i} className="w-3.5 h-3.5 fill-current" />
+                        <Star key={i} className="w-3 h-3 fill-current" />
                       ))}
                     </div>
                   </div>
@@ -499,6 +590,7 @@ export const ProductDetails: React.FC = () => {
 export const CartPage: React.FC = () => {
   const { user } = useAuth();
   const { cartItems, savedItems, totalAmount, updateQuantity, removeItem, toggleSaveForLater } = useCart();
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
 
   if (!user || !user.customerId) {
@@ -506,16 +598,16 @@ export const CartPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12 space-y-8">
-      <h2 className="text-3xl font-extrabold text-white">Your Shopping Cart</h2>
+    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+      <h2 className="text-2xl font-extrabold text-white">Your Shopping Cart</h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart items list */}
         <div className="lg:col-span-2 space-y-6">
           <div className="glass p-6 rounded-2xl space-y-4">
-            <h3 className="text-lg font-bold text-purple-400 uppercase tracking-wide border-b border-slate-800 pb-2">Active Items ({cartItems.length})</h3>
+            <h3 className="text-xs font-bold text-orange-400 uppercase tracking-wider border-b border-slate-800 pb-2">Active Items ({cartItems.length})</h3>
             {cartItems.length === 0 ? (
-              <p className="text-slate-500 text-sm">Your shopping cart is currently empty.</p>
+              <p className="text-slate-500 text-xs">Your shopping cart is currently empty.</p>
             ) : (
               <div className="space-y-4">
                 {cartItems.map((item) => (
@@ -524,32 +616,32 @@ export const CartPage: React.FC = () => {
                       <img
                         src={item.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'}
                         alt={item.productName}
-                        className="w-16 h-16 object-cover rounded-lg border border-slate-700"
+                        className="w-16 h-16 object-cover rounded-lg border border-slate-800"
                       />
                       <div>
                         <h4 className="font-bold text-white text-sm"><Link to={`/product/${item.productId}`} className="hover:underline">{item.productName}</Link></h4>
-                        <span className="text-indigo-400 text-sm font-bold">${item.price.toFixed(2)}</span>
+                        <span className="text-orange-400 text-xs font-bold">{formatPrice(item.price)}</span>
                       </div>
                     </div>
 
                     <div className="flex items-center space-x-4">
-                      <div className="flex items-center bg-slate-900 border border-slate-700 rounded-lg overflow-hidden">
+                      <div className="flex items-center bg-slate-950 border border-slate-800 rounded-lg overflow-hidden">
                         <button
                           onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                          className="px-2.5 py-1 text-slate-400 hover:text-white transition"
+                          className="px-2.5 py-1 text-slate-500 hover:text-white transition"
                         >
                           -
                         </button>
-                        <span className="px-3 py-1 text-white text-sm font-semibold">{item.quantity}</span>
+                        <span className="px-3 py-1 text-white text-xs font-semibold">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                          className="px-2.5 py-1 text-slate-400 hover:text-white transition"
+                          className="px-2.5 py-1 text-slate-500 hover:text-white transition"
                         >
                           +
                         </button>
                       </div>
-                      <button onClick={() => toggleSaveForLater(item.productId)} className="text-xs text-indigo-400 hover:underline">Save Later</button>
-                      <button onClick={() => removeItem(item.productId)} className="text-xs text-rose-400 hover:underline">Remove</button>
+                      <button onClick={() => toggleSaveForLater(item.productId)} className="text-xs text-orange-400 hover:underline">Save Later</button>
+                      <button onClick={() => removeItem(item.productId)} className="text-xs text-rose-450 hover:underline">Remove</button>
                     </div>
                   </div>
                 ))}
@@ -559,9 +651,9 @@ export const CartPage: React.FC = () => {
 
           {/* Saved Items */}
           <div className="glass p-6 rounded-2xl space-y-4">
-            <h3 className="text-lg font-bold text-slate-400 uppercase tracking-wide border-b border-slate-800 pb-2">Saved For Later ({savedItems.length})</h3>
+            <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider border-b border-slate-800 pb-2">Saved For Later ({savedItems.length})</h3>
             {savedItems.length === 0 ? (
-              <p className="text-slate-500 text-xs">No items saved for later.</p>
+              <p className="text-slate-505 text-xs">No items saved for later.</p>
             ) : (
               <div className="space-y-4">
                 {savedItems.map((item) => (
@@ -574,12 +666,12 @@ export const CartPage: React.FC = () => {
                       />
                       <div>
                         <h4 className="font-bold text-white text-sm">{item.productName}</h4>
-                        <span className="text-indigo-400 text-xs font-bold">${item.price.toFixed(2)}</span>
+                        <span className="text-orange-400 text-xs font-bold">{formatPrice(item.price)}</span>
                       </div>
                     </div>
                     <div className="flex space-x-3">
                       <button onClick={() => toggleSaveForLater(item.productId)} className="text-xs text-emerald-400 hover:underline">Move to Cart</button>
-                      <button onClick={() => removeItem(item.productId)} className="text-xs text-rose-400 hover:underline">Delete</button>
+                      <button onClick={() => removeItem(item.productId)} className="text-xs text-rose-450 hover:underline">Delete</button>
                     </div>
                   </div>
                 ))}
@@ -588,30 +680,30 @@ export const CartPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Order Summary Checkout Card */}
+        {/* Order Summary Card */}
         <div className="glass p-6 rounded-2xl h-fit space-y-6">
-          <h3 className="text-xl font-extrabold text-white border-b border-slate-800 pb-3">Subtotal Summary</h3>
+          <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-3">Subtotal Summary</h3>
           <div className="space-y-3">
-            <div className="flex justify-between text-slate-400 text-sm">
+            <div className="flex justify-between text-slate-400 text-xs">
               <span>Items Total</span>
-              <span>${totalAmount.toFixed(2)}</span>
+              <span>{formatPrice(totalAmount)}</span>
             </div>
-            <div className="flex justify-between text-slate-400 text-sm">
+            <div className="flex justify-between text-slate-400 text-xs">
               <span>Standard Shipping</span>
               <span className="text-emerald-400 font-bold">FREE</span>
             </div>
-            <div className="flex justify-between text-white font-extrabold text-lg border-t border-slate-800 pt-3">
+            <div className="flex justify-between text-white font-extrabold text-base border-t border-slate-800 pt-3">
               <span>Final Total</span>
-              <span>${totalAmount.toFixed(2)}</span>
+              <span>{formatPrice(totalAmount)}</span>
             </div>
           </div>
 
           <button
             disabled={cartItems.length === 0}
             onClick={() => navigate('/checkout')}
-            className="w-full py-3 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2"
+            className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm"
           >
-            Proceed to Checkout <ArrowRight className="w-4 h-4" />
+            Proceed to Secure Checkout <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -622,6 +714,7 @@ export const CartPage: React.FC = () => {
 export const CheckoutPage: React.FC = () => {
   const { user } = useAuth();
   const { cartItems, totalAmount, clearCart } = useCart();
+  const { formatPrice } = useCurrency();
 
   // Coupon state
   const [couponCode, setCouponCode] = useState('');
@@ -682,72 +775,72 @@ export const CheckoutPage: React.FC = () => {
     return (
       <div className="max-w-md mx-auto px-4 py-20 text-center space-y-6">
         <div className="inline-flex p-4 bg-emerald-500/10 rounded-full text-emerald-400 border border-emerald-500/20">
-          <CheckCircle className="w-16 h-16 animate-pulse" />
+          <CheckCircle className="w-16 h-16" />
         </div>
-        <h2 className="text-3xl font-black text-white">Invoice Settlement Successful</h2>
-        <p className="text-slate-400 text-sm">Thank you for your order! Your payment was processed successfully via Stripe Sandbox.</p>
-        <div className="glass p-5 rounded-2xl text-left space-y-3 text-sm">
+        <h2 className="text-2xl font-black text-white">Invoice Settlement Successful</h2>
+        <p className="text-slate-400 text-xs">Your payment was processed successfully via Stripe Sandbox.</p>
+        <div className="glass p-5 rounded-2xl text-left space-y-3 text-xs">
           <div className="flex justify-between text-slate-400"><span>Order ID</span><span className="text-white font-bold">#{createdOrder.id}</span></div>
-          <div className="flex justify-between text-slate-400"><span>Paid Sum</span><span className="text-indigo-400 font-bold">${createdOrder.totalAmount.toFixed(2)}</span></div>
-          <div className="flex justify-between text-slate-400"><span>Status</span><span className="text-emerald-400 font-bold uppercase tracking-wider text-xs">{createdOrder.status}</span></div>
+          <div className="flex justify-between text-slate-400"><span>Paid Sum</span><span className="text-orange-400 font-bold">{formatPrice(createdOrder.totalAmount)}</span></div>
+          <div className="flex justify-between text-slate-400"><span>Status</span><span className="text-emerald-400 font-bold uppercase tracking-wider text-[10px]">{createdOrder.status}</span></div>
         </div>
         <div className="flex space-x-3">
-          <Link to="/" className="w-1/2 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-lg transition text-center text-sm">Continue Shopping</Link>
-          <Link to="/orders" className="w-1/2 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg transition text-center text-sm">Order History</Link>
+          <Link to="/" className="w-1/2 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-lg transition text-center text-xs">Continue Shopping</Link>
+          <Link to="/orders" className="w-1/2 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-lg transition text-center text-xs">Order History</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
-      <h2 className="text-3xl font-extrabold text-white">Secure Checkout</h2>
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+      <h2 className="text-2xl font-extrabold text-white">Secure Checkout</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Billing and Stripe details */}
         <form onSubmit={handleCheckout} className="md:col-span-2 glass p-6 rounded-2xl space-y-6">
-          <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-2 flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-purple-400" /> Stripe Sandbox Payment
+          <h3 className="text-sm font-bold text-white border-b border-slate-805 pb-2 flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-orange-400" /> Stripe Sandbox Payment
           </h3>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm text-slate-300 font-semibold mb-1">Credit Card Number</label>
+              <label className="block text-xs text-slate-300 font-semibold mb-1">Credit Card Number</label>
               <input
                 type="text"
                 required
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none"
+                className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-white text-xs focus:outline-none"
                 placeholder="4242 4242 4242 4242 (Stripe Sandbox)"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-slate-300 font-semibold mb-1">Expiration Date</label>
+                <label className="block text-xs text-slate-300 font-semibold mb-1">Expiration</label>
                 <input
                   type="text"
                   required
                   placeholder="12/28"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none"
+                  className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-white text-xs focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-sm text-slate-300 font-semibold mb-1">CVC Code</label>
+                <label className="block text-xs text-slate-300 font-semibold mb-1">CVC Code</label>
                 <input
                   type="text"
                   required
                   placeholder="123"
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none"
+                  className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-white text-xs focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm text-slate-300 font-semibold mb-1">Select Payment Token</label>
+              <label className="block text-xs text-slate-300 font-semibold mb-1">Stripe Sandbox Card Token</label>
               <select
                 value={stripeToken}
                 onChange={(e) => setStripeToken(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-sm"
+                className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-white text-xs"
               >
                 <option value="pm_card_visa">Visa Standard Sandbox (Succeeds)</option>
                 <option value="pm_card_chargeDeclined">Visa Declined Sandbox (Fails)</option>
@@ -758,58 +851,58 @@ export const CheckoutPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading || cartItems.length === 0}
-            className="w-full py-3 bg-purple-600 hover:bg-purple-500 font-bold rounded-lg shadow-lg transition flex items-center justify-center gap-2"
+            className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 font-bold rounded-lg text-xs shadow-lg transition flex items-center justify-center gap-2"
           >
-            {loading ? 'Settling Payment Intent...' : `Pay $${getDiscountedTotal().toFixed(2)}`}
+            {loading ? 'Settling Payment Intent...' : `Pay ${formatPrice(getDiscountedTotal())}`}
           </button>
         </form>
 
         {/* Invoice Summary with Coupon block */}
         <div className="glass p-6 rounded-2xl h-fit space-y-6">
-          <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-2">Invoice Summary</h3>
+          <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-2">Invoice Summary</h3>
           
           {/* Coupon inputs */}
           <div className="space-y-2">
-            <span className="text-xs text-slate-400 font-bold uppercase tracking-wider block">Apply Promo Coupon</span>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Apply Promo Coupon</span>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value)}
                 placeholder="E.g. SUMMER20"
-                className="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-xs w-2/3"
+                className="bg-slate-900 border border-slate-800 rounded px-3 py-1.5 text-white text-xs w-2/3"
               />
               <button
                 type="button"
                 onClick={applyCoupon}
-                className="w-1/3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg text-xs py-1.5 transition"
+                className="w-1/3 bg-slate-850 hover:bg-slate-800 text-white font-bold rounded text-xs py-1.5 transition"
               >
                 Apply
               </button>
             </div>
-            {couponError && <span className="text-rose-500 text-xs">{couponError}</span>}
+            {couponError && <span className="text-rose-500 text-[10px]">{couponError}</span>}
             {appliedDiscount && (
-              <div className="text-xs text-emerald-400 flex items-center gap-1">
-                <Tag className="w-3.5 h-3.5" /> Coupon '{appliedDiscount.code}' applied: {appliedDiscount.discountValue}% off
+              <div className="text-[10px] text-emerald-400 flex items-center gap-1">
+                <Tag className="w-3 h-3" /> Coupon '{appliedDiscount.code}' applied: {appliedDiscount.discountValue}% off
               </div>
             )}
           </div>
 
-          <div className="space-y-3 pt-4 border-t border-slate-800 text-sm">
-            <div className="flex justify-between text-slate-400"><span>Cart Subtotal</span><span>${totalAmount.toFixed(2)}</span></div>
+          <div className="space-y-3 pt-4 border-t border-slate-800 text-xs">
+            <div className="flex justify-between text-slate-400"><span>Cart Subtotal</span><span>{formatPrice(totalAmount)}</span></div>
             {appliedDiscount && (
               <div className="flex justify-between text-emerald-400 font-bold">
                 <span>Discount</span>
                 <span>
                   -{appliedDiscount.discountType === 'PERCENTAGE' 
                     ? `${appliedDiscount.discountValue}%` 
-                    : `$${appliedDiscount.discountValue}`}
+                    : `${formatPrice(appliedDiscount.discountValue)}`}
                 </span>
               </div>
             )}
-            <div className="flex justify-between text-white font-extrabold text-base border-t border-slate-800 pt-3">
+            <div className="flex justify-between text-white font-extrabold text-sm border-t border-slate-800 pt-3">
               <span>Grand Total</span>
-              <span>${getDiscountedTotal().toFixed(2)}</span>
+              <span>{formatPrice(getDiscountedTotal())}</span>
             </div>
           </div>
         </div>
@@ -820,6 +913,7 @@ export const CheckoutPage: React.FC = () => {
 
 export const CustomerProfile: React.FC = () => {
   const { user } = useAuth();
+  const { formatPrice } = useCurrency();
   const [orders, setOrders] = useState<any[]>([]);
 
   const fetchOrders = async () => {
@@ -863,36 +957,36 @@ export const CustomerProfile: React.FC = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12 space-y-8">
-      <h2 className="text-3xl font-extrabold text-white">Your Order History</h2>
+    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+      <h2 className="text-2xl font-extrabold text-white">Your Order History</h2>
 
       <div className="space-y-6">
         {orders.length === 0 ? (
-          <p className="text-slate-500 text-sm glass p-8 rounded-2xl text-center">You haven't placed any orders yet.</p>
+          <p className="text-slate-500 text-xs glass p-8 rounded-2xl text-center">You haven't placed any orders yet.</p>
         ) : (
           orders.map((o) => (
             <div key={o.id} className="glass p-6 rounded-2xl space-y-4">
               {/* Order Header */}
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-800 pb-3 gap-3">
                 <div>
-                  <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider">Order Placement ID</span>
+                  <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wider">Order ID</span>
                   <span className="font-extrabold text-white">#{o.id}</span>
                 </div>
                 <div className="flex flex-wrap gap-4 items-center">
                   <div className="text-left sm:text-right">
-                    <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider">Placement Date</span>
-                    <span className="text-slate-300 font-medium text-sm">{o.createdAt.substring(0, 10)}</span>
+                    <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wider">Date</span>
+                    <span className="text-slate-300 font-medium text-xs">{o.createdAt.substring(0, 10)}</span>
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider text-left sm:text-right">Total Settled</span>
-                    <span className="text-indigo-400 font-black text-sm">${o.totalAmount.toFixed(2)}</span>
+                    <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wider text-left sm:text-right">Total Paid</span>
+                    <span className="text-orange-400 font-black text-xs">{formatPrice(o.totalAmount)}</span>
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider text-left sm:text-right">Status State</span>
-                    <span className={`text-xs font-black uppercase tracking-wider px-2.5 py-1 rounded ${
-                      o.status === 'CANCELLED' || o.status === 'REFUNDED' ? 'bg-rose-500/10 text-rose-400' :
+                    <span className="text-[10px] text-slate-505 font-bold block uppercase tracking-wider text-left sm:text-right">Status</span>
+                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${
+                      o.status === 'CANCELLED' || o.status === 'REFUNDED' ? 'bg-rose-500/10 text-rose-450' :
                       o.status === 'DELIVERED' || o.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-400' :
-                      'bg-yellow-500/10 text-yellow-400'
+                      'bg-yellow-500/10 text-yellow-455'
                     }`}>
                       {o.status}
                     </span>
@@ -905,14 +999,14 @@ export const CustomerProfile: React.FC = () => {
                 {o.items.map((item: any, i: number) => (
                   <div key={i} className="flex justify-between text-xs text-slate-300">
                     <span>{item.productName} <span className="text-slate-500 font-semibold">x{item.quantity}</span></span>
-                    <span className="font-bold text-slate-400">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="font-bold text-slate-400">{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
 
               {/* Timeline Status */}
-              <div className="bg-slate-900/50 p-4 rounded-xl space-y-4">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block flex items-center gap-1"><Clock className="w-4 h-4 text-purple-400" /> Tracking Status Timeline</span>
+              <div className="bg-slate-950 p-4 rounded-xl space-y-4">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block flex items-center gap-1"><Clock className="w-4 h-4 text-orange-500" /> Tracking Status Timeline</span>
                 <div className="flex items-center justify-between overflow-x-auto py-2 pr-4 space-x-4 min-w-max">
                   {['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'COMPLETED'].map((step, idx) => {
                     const steps = ['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'COMPLETED'];
@@ -922,12 +1016,12 @@ export const CustomerProfile: React.FC = () => {
                     
                     return (
                       <div key={step} className="flex items-center space-x-2">
-                        <div className={`w-3.5 h-3.5 rounded-full border-2 ${
-                          isCurrent ? 'bg-purple-500 border-purple-400 scale-125' :
+                        <div className={`w-3 h-3 rounded-full border-2 ${
+                          isCurrent ? 'bg-orange-500 border-orange-400 scale-125' :
                           isDone ? 'bg-emerald-500 border-emerald-400' : 'bg-slate-800 border-slate-700'
                         }`} />
-                        <span className={`text-[10px] font-bold tracking-wide uppercase ${
-                          isCurrent ? 'text-purple-400 font-black' : isDone ? 'text-emerald-400' : 'text-slate-500'
+                        <span className={`text-[9px] font-bold tracking-wide uppercase ${
+                          isCurrent ? 'text-orange-500 font-black' : isDone ? 'text-emerald-400' : 'text-slate-500'
                         }`}>{step}</span>
                       </div>
                     );
@@ -938,7 +1032,7 @@ export const CustomerProfile: React.FC = () => {
               {/* Actions Footer */}
               <div className="flex justify-end gap-3 pt-2">
                 {o.trackingNumber && (
-                  <span className="text-xs text-slate-400 font-medium self-center">Tracking: <code className="text-indigo-400">{o.trackingNumber}</code></span>
+                  <span className="text-[10px] text-slate-500 font-medium self-center">Tracking: <code className="text-orange-400">{o.trackingNumber}</code></span>
                 )}
                 
                 {(o.status === 'PENDING' || o.status === 'CONFIRMED') && (
@@ -946,7 +1040,7 @@ export const CustomerProfile: React.FC = () => {
                     onClick={() => requestCancel(o.id)}
                     className="px-4 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-lg text-xs font-bold transition"
                   >
-                    Request Cancellation
+                    Request Cancel
                   </button>
                 )}
 
@@ -955,7 +1049,7 @@ export const CustomerProfile: React.FC = () => {
                     onClick={() => requestReturn(o.id)}
                     className="px-4 py-1.5 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 border border-yellow-500/20 rounded-lg text-xs font-bold transition"
                   >
-                    File Return & Refund
+                    File Return
                   </button>
                 )}
               </div>

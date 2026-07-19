@@ -88,11 +88,11 @@ public class DataInitializer implements CommandLineRunner {
         Brand homeStyle = createBrand("HomeStyle");
 
         // 8. Seed Products
-        Product watch = createProduct("Smartwatch Pro", "Advanced multi-sport tracker with ECG sensor and 7-day battery life.", new BigDecimal("199.99"), "TECH-SW-01", electronics, techCorp);
-        Product earbuds = createProduct("Wireless Buds Elite", "Active noise cancelling wireless earbuds with premium high-fidelity acoustics.", new BigDecimal("89.99"), "TECH-WE-02", electronics, techCorp);
-        Product hoodie = createProduct("Denim Jacket Classic", "Comfortable cotton denim hoodie style jacket suitable for winter season wear.", new BigDecimal("59.99"), "WEAR-DJ-03", apparel, fitWear);
-        Product mat = createProduct("Eco Yoga Mat", "High density eco-friendly biodegradable material yoga workout positioning mat.", new BigDecimal("29.99"), "SPRT-YM-04", sports, fitWear);
-        Product blender = createProduct("Power Blender 1000", "High speed countertop kitchen blender for juices, shakes, and food preps.", new BigDecimal("129.99"), "KITCH-PB-05", kitchen, homeStyle);
+        Product watch = createProduct("Smartwatch Pro", "Advanced multi-sport tracker with ECG sensor and 7-day battery life.", new BigDecimal("199.99"), "TECH-SW-01", "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600", electronics, techCorp);
+        Product earbuds = createProduct("Wireless Buds Elite", "Active noise cancelling wireless earbuds with premium high-fidelity acoustics.", new BigDecimal("89.99"), "TECH-WE-02", "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600", electronics, techCorp);
+        Product hoodie = createProduct("Denim Jacket Classic", "Comfortable cotton denim hoodie style jacket suitable for winter season wear.", new BigDecimal("59.99"), "WEAR-DJ-03", "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=600", apparel, fitWear);
+        Product mat = createProduct("Eco Yoga Mat", "High density eco-friendly biodegradable material yoga workout positioning mat.", new BigDecimal("29.99"), "SPRT-YM-04", "https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=600", sports, fitWear);
+        Product blender = createProduct("Power Blender 1000", "High speed countertop kitchen blender for juices, shakes, and food preps.", new BigDecimal("129.99"), "KITCH-PB-05", "https://images.unsplash.com/photo-1578643463396-0997cb5328c1?w=600", kitchen, homeStyle);
 
         // 9. Seed Warehouses
         Warehouse nycWh = createWarehouse("NYC East Coast Hub", "New York City", 10000);
@@ -151,13 +151,14 @@ public class DataInitializer implements CommandLineRunner {
         return brandRepository.save(brand);
     }
 
-    private Product createProduct(String name, String desc, BigDecimal price, String sku, Category cat, Brand b) {
+    private Product createProduct(String name, String desc, BigDecimal price, String sku, String imageUrl, Category cat, Brand b) {
         Product p = Product.builder()
                 .name(name)
                 .description(desc)
                 .price(price)
                 .sku(sku)
                 .barcode(sku + "-BC")
+                .imageUrl(imageUrl)
                 .category(cat)
                 .brand(b)
                 .active(true)
