@@ -33,6 +33,10 @@ export const Catalog: React.FC = () => {
   // Wishlist state
   const [wishlistIds, setWishlistIds] = useState<number[]>([]);
 
+  // Image search modal states
+  const [showImageSearchModal, setShowImageSearchModal] = useState(false);
+  const [analyzingImage, setAnalyzingImage] = useState(false);
+
   const fetchFilters = async () => {
     try {
       const catRes = await API.get('/products/categories');
@@ -161,10 +165,13 @@ export const Catalog: React.FC = () => {
           />
 
           {/* Camera Mock Icon */}
-          <div className="absolute right-36 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition flex items-center gap-1.5 text-xs font-semibold pr-3 border-r border-slate-200 dark:border-slate-800">
-            <Camera className="w-4.5 h-4.5" />
+          <button 
+            onClick={() => setShowImageSearchModal(true)}
+            className="absolute right-36 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition flex items-center gap-1.5 text-xs font-semibold pr-3 border-r border-slate-200 dark:border-slate-800 focus:outline-none"
+          >
+            <Camera className="w-4.5 h-4.5 text-indigo-500 dark:text-indigo-400" />
             <span className="hidden sm:inline">Image Search</span>
-          </div>
+          </button>
 
           <button className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold px-7 py-2.5 rounded-full text-sm transition flex items-center gap-1 ml-auto">
             <Search className="w-4 h-4" /> Search
@@ -386,6 +393,102 @@ export const Catalog: React.FC = () => {
           <HelpCircle className="w-5 h-5" />
         </button>
       </div>
+
+      {/* Interactive Mock Image Search Modal */}
+      {showImageSearchModal && (
+        <div className="fixed inset-0 bg-slate-950/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-xl text-slate-800 dark:text-slate-200 relative overflow-hidden transition-colors duration-200">
+            
+            {analyzingImage ? (
+              <div className="py-12 flex flex-col items-center justify-center space-y-4 text-center">
+                <div className="w-12 h-12 rounded-full border-4 border-indigo-500/20 border-t-indigo-600 animate-spin" />
+                <span className="text-sm font-bold text-slate-900 dark:text-white animate-pulse">AI Computer Vision Classifier</span>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Extracting feature vectors & matching against 1,000+ catalog SKUs...</p>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+                  <Camera className="w-6 h-6 text-indigo-550 dark:text-indigo-400" />
+                  <h3 className="text-base font-extrabold text-slate-900 dark:text-white">AI Image Classification Search</h3>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Drag & drop your product photo or select a quick sample below to scan the catalog using computer vision:</p>
+                
+                {/* Drag and drop mock zone */}
+                <div 
+                  onClick={() => {
+                    setAnalyzingImage(true);
+                    setTimeout(() => {
+                      setQuery('Keyboard');
+                      setAnalyzingImage(false);
+                      setShowImageSearchModal(false);
+                      alert("AI Vision Classifier: Uploaded file detected as 'Mechanical Keyboard'. Applied search filter!");
+                    }, 1500);
+                  }}
+                  className="border-2 border-dashed border-slate-300 dark:border-slate-800 hover:border-indigo-500 dark:hover:border-indigo-400 rounded-2xl p-8 text-center cursor-pointer transition bg-slate-50 dark:bg-slate-950/60"
+                >
+                  <Sparkles className="w-8 h-8 text-indigo-550 dark:text-indigo-400 mx-auto mb-2 animate-bounce" />
+                  <span className="text-xs font-bold block text-slate-700 dark:text-slate-300">Drag photo here or browse files</span>
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500 block mt-1">Supports PNG, JPG up to 5MB</span>
+                </div>
+
+                <div className="space-y-2">
+                  <span className="text-[10px] uppercase font-bold text-slate-450 dark:text-slate-500 block">Select Mock Sample Photo:</span>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      onClick={() => {
+                        setAnalyzingImage(true);
+                        setTimeout(() => {
+                          setQuery('Keyboard');
+                          setAnalyzingImage(false);
+                          setShowImageSearchModal(false);
+                        }, 1500);
+                      }}
+                      className="p-2 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-indigo-500 text-[10px] font-bold bg-slate-50 dark:bg-slate-950 transition-all text-slate-800 dark:text-slate-200"
+                    >
+                      ⌨️ Keyboard
+                    </button>
+                    <button
+                      onClick={() => {
+                        setAnalyzingImage(true);
+                        setTimeout(() => {
+                          setQuery('Sneakers');
+                          setAnalyzingImage(false);
+                          setShowImageSearchModal(false);
+                        }, 1500);
+                      }}
+                      className="p-2 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-indigo-500 text-[10px] font-bold bg-slate-50 dark:bg-slate-950 transition-all text-slate-800 dark:text-slate-200"
+                    >
+                      👟 Sneakers
+                    </button>
+                    <button
+                      onClick={() => {
+                        setAnalyzingImage(true);
+                        setTimeout(() => {
+                          setQuery('Blender');
+                          setAnalyzingImage(false);
+                          setShowImageSearchModal(false);
+                        }, 1500);
+                      }}
+                      className="p-2 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-indigo-500 text-[10px] font-bold bg-slate-50 dark:bg-slate-950 transition-all text-slate-800 dark:text-slate-200"
+                    >
+                      🍹 Blender
+                    </button>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => setShowImageSearchModal(false)}
+                  className="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-750 dark:text-slate-200 font-bold rounded-xl text-xs transition border border-slate-200 dark:border-slate-700"
+                >
+                  Cancel
+                </button>
+              </>
+            )}
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

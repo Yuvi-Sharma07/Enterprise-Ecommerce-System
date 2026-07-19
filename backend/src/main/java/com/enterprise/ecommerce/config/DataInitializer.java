@@ -107,25 +107,49 @@ public class DataInitializer implements CommandLineRunner {
                 "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600",
                 "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600",
                 "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600",
-                "https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=600"
+                "https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=600",
+                "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600",
+                "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=600",
+                "https://images.unsplash.com/photo-1527690710607-e57cd5338321?w=600",
+                "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600",
+                "https://images.unsplash.com/photo-1608248597481-496100c80836?w=600",
+                "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=600"
             },
             {
                 "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=600",
                 "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600",
                 "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600",
-                "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600"
+                "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600",
+                "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=600",
+                "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600",
+                "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600",
+                "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=600",
+                "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600",
+                "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600"
             },
             {
                 "https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=600",
                 "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600",
                 "https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?w=600",
-                "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600"
+                "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600",
+                "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=600",
+                "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600",
+                "https://images.unsplash.com/photo-1518481612222-68bbe828ecd1?w=600",
+                "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=600",
+                "https://images.unsplash.com/photo-1595078475328-1ab0540ae167?w=600",
+                "https://images.unsplash.com/photo-1607522370275-f14206abe5d3?w=600"
             },
             {
                 "https://images.unsplash.com/photo-1578643463396-0997cb5328c1?w=600",
                 "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600",
                 "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=600",
-                "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600"
+                "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600",
+                "https://images.unsplash.com/photo-1531234799389-dcb7651eb0a2?w=600",
+                "https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=600",
+                "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600",
+                "https://images.unsplash.com/photo-1530062845289-445889f9e113?w=600",
+                "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600",
+                "https://images.unsplash.com/photo-1585518419759-7fe2ec7f3e5e?w=600"
             }
         };
 
@@ -140,7 +164,7 @@ public class DataInitializer implements CommandLineRunner {
             String desc = "Programmatically generated high-quality wholesale catalog entry " + name + " featuring standard industrial specs, long battery/material durability guarantees.";
             BigDecimal price = new BigDecimal(10.0 + (i % 250) * 1.99).setScale(2, java.math.RoundingMode.HALF_UP);
             String sku = "SKU-" + baseSkus[catIdx] + "-" + String.format("%04d", i);
-            String imgUrl = images[catIdx][itemIdx];
+            String imgUrl = images[catIdx][i % images[catIdx].length];
 
             Product seededProduct = createProduct(name, desc, price, sku, imgUrl, cats[catIdx], brs[brandIdx]);
 
