@@ -84,7 +84,7 @@ public class AuthService {
         User user = User.builder()
                 .email(signUpRequest.getEmail())
                 .password(encoder.encode(signUpRequest.getPassword()))
-                .enabled(false)
+                .enabled(true)
                 .verificationToken(UUID.randomUUID().toString())
                 .build();
 
