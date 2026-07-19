@@ -1,4 +1,4 @@
-# 🛒 Enterprise E-Commerce Platform
+# Enterprise E-Commerce Platform
 
 > A production-ready, scalable Full-Stack E-Commerce Platform built using **React, FastAPI, PostgreSQL, Redis, Docker, and AI-powered recommendations**. Designed with modern software engineering principles, clean architecture, secure authentication, and enterprise-grade backend practices.
 
@@ -8,11 +8,10 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-336791)
 ![Redis](https://img.shields.io/badge/Redis-Cache-red)
 ![Docker](https://img.shields.io/badge/Docker-Container-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
 
-# 📌 Overview
+# Overview
 
 Enterprise E-Commerce Platform is a complete full-stack shopping application built to demonstrate real-world software engineering practices used in modern technology companies.
 
@@ -22,9 +21,9 @@ The project mimics the architecture used in enterprise e-commerce systems while 
 
 ---
 
-# 🚀 Features
+# Features
 
-## 👤 Authentication
+## Authentication
 
 - JWT Authentication
 - Secure Login
@@ -36,7 +35,7 @@ The project mimics the architecture used in enterprise e-commerce systems while 
 
 ---
 
-## 🛍 Product Management
+## Product Management
 
 - Browse Products
 - Product Search
@@ -49,7 +48,7 @@ The project mimics the architecture used in enterprise e-commerce systems while 
 
 ---
 
-## 🛒 Shopping Cart
+## Shopping Cart
 
 - Add to Cart
 - Remove Items
@@ -59,7 +58,7 @@ The project mimics the architecture used in enterprise e-commerce systems while 
 
 ---
 
-## ❤️ Wishlist
+## Wishlist
 
 - Add Products
 - Remove Products
@@ -67,7 +66,7 @@ The project mimics the architecture used in enterprise e-commerce systems while 
 
 ---
 
-## 📦 Orders
+## Orders
 
 - Place Order
 - Order History
@@ -77,7 +76,7 @@ The project mimics the architecture used in enterprise e-commerce systems while 
 
 ---
 
-## 👑 Admin Dashboard
+## Admin Dashboard
 
 - Dashboard Analytics
 - User Management
@@ -89,7 +88,7 @@ The project mimics the architecture used in enterprise e-commerce systems while 
 
 ---
 
-## 🤖 AI Features
+## AI Features
 
 - AI Product Recommendation Engine
 - Similar Product Suggestions
@@ -99,7 +98,7 @@ The project mimics the architecture used in enterprise e-commerce systems while 
 
 ---
 
-## ⚡ Backend Features
+## Backend Features
 
 - FastAPI REST APIs
 - SQLAlchemy ORM
@@ -114,7 +113,7 @@ The project mimics the architecture used in enterprise e-commerce systems while 
 
 ---
 
-## 🎨 Frontend Features
+## Frontend Features
 
 - React
 - React Router
@@ -128,9 +127,9 @@ The project mimics the architecture used in enterprise e-commerce systems while 
 
 ---
 
-# 🏗 System Architecture
+# System Architecture
 
-```
+```text
                 React Frontend
                        │
                        ▼
@@ -146,7 +145,7 @@ The project mimics the architecture used in enterprise e-commerce systems while 
 
 ---
 
-# 🛠 Tech Stack
+# Tech Stack
 
 ## Frontend
 
@@ -191,9 +190,9 @@ The project mimics the architecture used in enterprise e-commerce systems while 
 
 ---
 
-# 📂 Project Structure
+# Project Structure
 
-```
+```text
 enterprise-ecommerce/
 
 │
@@ -224,9 +223,9 @@ enterprise-ecommerce/
 
 ---
 
-# 🔐 Authentication Flow
+# Authentication Flow
 
-```
+```text
 User Login
       │
       ▼
@@ -244,7 +243,7 @@ Protected API Access
 
 ---
 
-# 📊 Database Design
+# Database Design
 
 Main entities include:
 
@@ -261,19 +260,19 @@ Relationships are normalized to reduce redundancy and improve scalability.
 
 ---
 
-# ⚡ API Highlights
+# API Highlights
 
-### Authentication
+## Authentication
 
-```
+```http
 POST /register
 POST /login
 GET /me
 ```
 
-### Products
+## Products
 
-```
+```http
 GET /products
 GET /products/{id}
 POST /products
@@ -281,24 +280,24 @@ PUT /products/{id}
 DELETE /products/{id}
 ```
 
-### Categories
+## Categories
 
-```
+```http
 GET /categories
 POST /categories
 ```
 
-### Cart
+## Cart
 
-```
+```http
 GET /cart
 POST /cart/add
 DELETE /cart/remove
 ```
 
-### Orders
+## Orders
 
-```
+```http
 POST /orders
 GET /orders
 GET /orders/{id}
@@ -306,7 +305,7 @@ GET /orders/{id}
 
 ---
 
-# 🤖 AI Recommendation Module
+# AI Recommendation Module
 
 The recommendation engine analyzes:
 
@@ -316,11 +315,16 @@ The recommendation engine analyzes:
 - Popular Products
 - User Behavior
 
-Future improvements include collaborative filtering and hybrid recommendation systems.
+Future improvements include:
+
+- Collaborative Filtering
+- Hybrid Recommendation System
+- Personalized Ranking
+- Deep Learning Recommendation Models
 
 ---
 
-# 🚀 Installation
+# Installation
 
 ## Clone Repository
 
@@ -332,13 +336,17 @@ cd enterprise-ecommerce
 
 ---
 
-## Backend
+## Backend Setup
 
 ```bash
 cd backend
 
 python -m venv venv
 
+# Windows
+venv\Scripts\activate
+
+# Linux / macOS
 source venv/bin/activate
 
 pip install -r requirements.txt
@@ -348,7 +356,7 @@ uvicorn main:app --reload
 
 ---
 
-## Frontend
+## Frontend Setup
 
 ```bash
 cd frontend
@@ -360,29 +368,27 @@ npm run dev
 
 ---
 
-## Database
+## Environment Variables
 
-Configure your PostgreSQL credentials inside:
-
-```
-.env
-```
-
-Example
+Create a `.env` file inside the backend directory.
 
 ```env
 DATABASE_URL=postgresql://username:password@localhost:5432/ecommerce
 
 SECRET_KEY=your_secret_key
 
+ALGORITHM=HS256
+
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
 REDIS_URL=redis://localhost:6379
 ```
 
 ---
 
-# 🐳 Docker
+# Docker
 
-Run the entire application
+Run the entire application using Docker Compose.
 
 ```bash
 docker-compose up --build
@@ -390,9 +396,9 @@ docker-compose up --build
 
 ---
 
-# 📈 Future Enhancements
+# Future Enhancements
 
-- Stripe Payments
+- Stripe Payment Gateway
 - Razorpay Integration
 - Elasticsearch
 - Kafka Event Streaming
@@ -402,85 +408,78 @@ docker-compose up --build
 - GraphQL API
 - AI Chatbot
 - Fraud Detection
-- Recommendation using Deep Learning
+- Deep Learning Recommendation Engine
+- Real-Time Notifications
+- Email Verification
+- Social Login
+- Product Reviews with Sentiment Analysis
 
 ---
 
-# 🧪 Testing
+# Testing
 
 - Unit Testing
 - API Testing
-- Integration Testing
 - Authentication Testing
+- Integration Testing
+- End-to-End Testing
 
 ---
 
-# 📸 Screenshots
+# Screenshots
 
-```
+```text
 screenshots/
 
 Home Page
-
-Product Page
-
-Cart
-
+Products Page
+Product Details
+Shopping Cart
 Checkout
-
+Orders
 Admin Dashboard
-
 Analytics
 ```
 
-(Add screenshots here)
+Replace this section with actual screenshots after deployment.
 
 ---
 
-# 💡 Learning Outcomes
+# Learning Outcomes
 
 This project demonstrates practical experience with:
 
-- Full Stack Development
+- Full-Stack Web Development
 - REST API Design
 - Authentication & Authorization
 - Database Design
-- ORM
+- ORM with SQLAlchemy
 - Backend Architecture
-- Caching
+- Caching using Redis
 - AI Integration
-- Docker
+- Docker Containerization
 - Git Workflow
 - Scalable Software Engineering
+- Enterprise Project Structure
 
 ---
 
-# 🤝 Contributing
+# Contributing
 
 Contributions are welcome.
 
-1. Fork the repository
-
-2. Create a new branch
-
-3. Commit your changes
-
-4. Push your branch
-
-5. Open a Pull Request
+1. Fork the repository.
+2. Create a new feature branch.
+3. Commit your changes.
+4. Push your branch.
+5. Open a Pull Request.
 
 ---
 
-# 📄 License
-
-This project is licensed under the MIT License.
-
----
-
-# 👨‍💻 Author
+# Author
 
 **Yuvraj Sharma**
 
 Computer Science Student | Backend Developer | AI Enthusiast | Full Stack Developer
 
-If you found this project useful, consider giving it a ⭐ on GitHub!
+If you found this project useful, consider giving it a star on GitHub.
