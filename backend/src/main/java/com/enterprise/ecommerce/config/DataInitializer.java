@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -47,7 +46,6 @@ public class DataInitializer implements CommandLineRunner {
     private PasswordEncoder encoder;
 
     @Override
-    @Transactional
     public void run(String... args) throws Exception {
         // 1. Seed Roles
         bootstrapRoles();
@@ -154,8 +152,7 @@ public class DataInitializer implements CommandLineRunner {
         };
 
         String[] baseSkus = {"ELEC", "APPR", "SPRT", "KTCH"};
-
-        for (int i = 1; i <= 1020; i++) {
+        for (int i = 1; i <= 20; i++) {
             int catIdx = i % cats.length;
             int itemIdx = (i / cats.length) % names[catIdx].length;
             int brandIdx = i % brs.length;
