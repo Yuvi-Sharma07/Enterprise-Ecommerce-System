@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -46,7 +47,8 @@ public class DataInitializer implements CommandLineRunner {
     private PasswordEncoder encoder;
 
     @Override
-public void run(String... args) {
+    @Transactional
+    public void run(String... args) {
 
     System.out.println("========== DATA INITIALIZER STARTED ==========");
 
@@ -64,30 +66,36 @@ System.out.println("Roles OK");
     return;
 }
 
-        // 3. Seed Users
-        User adminUser = createUser("admin@ecomm.com", "admin123", RoleName.ROLE_ADMIN);
-        System.out.println("Admin Created");
+        // 3. Reuse or Create Users
+        User adminUser = userRepository.findByEmail("admin@ecomm.com")
+                .orElseGet(() -> createUser("admin@ecomm.com", "admin123", RoleName.ROLE_ADMIN));
+        System.out.println("Admin loaded/created");
 
-        User managerUser = createUser("manager@ecomm.com", "manager123", RoleName.ROLE_WAREHOUSE_MANAGER);
-        System.out.println("Manager Created");
+        User managerUser = userRepository.findByEmail("manager@ecomm.com")
+                .orElseGet(() -> createUser("manager@ecomm.com", "manager123", RoleName.ROLE_WAREHOUSE_MANAGER));
+        System.out.println("Manager loaded/created");
 
-        User supplierUser = createUser("supplier@ecomm.com", "supplier123", RoleName.ROLE_SUPPLIER);
-        System.out.println("Supplier Created");
+        User supplierUser = userRepository.findByEmail("supplier@ecomm.com")
+                .orElseGet(() -> createUser("supplier@ecomm.com", "supplier123", RoleName.ROLE_SUPPLIER));
+        System.out.println("Supplier loaded/created");
 
-        User customerUser = createUser("customer@ecomm.com", "customer123", RoleName.ROLE_CUSTOMER);
-        System.out.println("Customer Created");
+        User customerUser = userRepository.findByEmail("customer@ecomm.com")
+                .orElseGet(() -> createUser("customer@ecomm.com", "customer123", RoleName.ROLE_CUSTOMER));
+        System.out.println("Customer loaded/created");
 
-        // 4. Create Customer Profile
-        Customer customer = Customer.builder()
-                .user(customerUser)
-                .firstName("Demo")
-                .lastName("Customer")
-                .phone("+1 555-0100")
-                .address("742 Evergreen Terrace, Springfield")
-                .build();
-        customerRepository.save(customer);
-        System.out.println("Customer Profile Created");
+// Create customer profile only if missing
+if (customerRepository.count() == 0) {
+    Customer customer = Customer.builder()
+            .user(customerUser)
+            .firstName("Demo")
+            .lastName("Customer")
+            .phone("+1 555-0100")
+            .address("742 Evergreen Terrace, Springfield")
+            .build();
 
+    customerRepository.save(customer);
+    System.out.println("Customer Profile Created");
+}
         // 5. Create Supplier Profile (Optional reference registry)
         // Suppliers are listed directly in Supplier Dashboard
 
