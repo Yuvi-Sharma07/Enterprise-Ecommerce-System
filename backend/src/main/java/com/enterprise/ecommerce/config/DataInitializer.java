@@ -46,20 +46,37 @@ public class DataInitializer implements CommandLineRunner {
     private PasswordEncoder encoder;
 
     @Override
-    public void run(String... args) throws Exception {
+public void run(String... args) {
+
+    System.out.println("========== DATA INITIALIZER STARTED ==========");
+
+    try {
+
         // 1. Seed Roles
         bootstrapRoles();
+System.out.println("Roles OK");
 
         // 2. Check if DB is already seeded
+        System.out.println("Users Count = " + userRepository.count());
+
         if (userRepository.count() > 0) {
-            return;
+    System.out.println("Already Seeded");
+    return;
+
         }
 
         // 3. Seed Users
         User adminUser = createUser("admin@ecomm.com", "admin123", RoleName.ROLE_ADMIN);
+        System.out.println("Admin Created");
+
         User managerUser = createUser("manager@ecomm.com", "manager123", RoleName.ROLE_WAREHOUSE_MANAGER);
+        System.out.println("Manager Created");
+
         User supplierUser = createUser("supplier@ecomm.com", "supplier123", RoleName.ROLE_SUPPLIER);
+        System.out.println("Supplier Created");
+
         User customerUser = createUser("customer@ecomm.com", "customer123", RoleName.ROLE_CUSTOMER);
+        System.out.println("Customer Created");
 
         // 4. Create Customer Profile
         Customer customer = Customer.builder()
@@ -70,6 +87,7 @@ public class DataInitializer implements CommandLineRunner {
                 .address("742 Evergreen Terrace, Springfield")
                 .build();
         customerRepository.save(customer);
+        System.out.println("Customer Profile Created");
 
         // 5. Create Supplier Profile (Optional reference registry)
         // Suppliers are listed directly in Supplier Dashboard
@@ -174,7 +192,14 @@ public class DataInitializer implements CommandLineRunner {
         createCoupon("SUMMER20", DiscountType.PERCENTAGE, new BigDecimal("20.00"), 100);
         createCoupon("WELCOME10", DiscountType.FLAT, new BigDecimal("10.00"), 200);
 
-        System.out.println("--- ENTERPRISE E-COMMERCE SEED DATA INITIALIZED SUCCESSFUL ---");
+       System.out.println("--- ENTERPRISE E-COMMERCE SEED DATA INITIALIZED SUCCESSFUL ---");
+System.out.println("========== DATA INITIALIZER COMPLETED ==========");
+
+} catch (Exception e) {
+    System.err.println("========== SEED FAILED ==========");
+    e.printStackTrace();
+    throw new RuntimeException(e);
+}
     }
 
     private void bootstrapRoles() {
