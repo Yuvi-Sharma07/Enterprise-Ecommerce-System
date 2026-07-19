@@ -37,6 +37,75 @@ export const Catalog: React.FC = () => {
   const [showImageSearchModal, setShowImageSearchModal] = useState(false);
   const [analyzingImage, setAnalyzingImage] = useState(false);
 
+  // AI Search states
+  const [aiQuery, setAiQuery] = useState('');
+  const [aiSearching, setAiSearching] = useState(false);
+
+  // AI Chat Bot states
+  const [showAIChat, setShowAIChat] = useState(false);
+  const [chatMessages, setChatMessages] = useState<any[]>([
+    { sender: 'bot', text: 'Hello! I am your RB Cart AI Assistant. Ask me anything about tracking your packages, warehouse stock details, or product discounts!' }
+  ]);
+  const [chatInput, setChatInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+
+  const handleAISearch = (promptText: string) => {
+    if (!promptText.trim()) return;
+    setAiQuery(promptText);
+    setAiSearching(true);
+    setTimeout(() => {
+      const text = promptText.toLowerCase();
+      let matchedKeyword = '';
+      if (text.includes('keyboard') || text.includes('keyboards')) {
+        matchedKeyword = 'Keyboard';
+      } else if (text.includes('earbud') || text.includes('earbuds') || text.includes('buds') || text.includes('headphones')) {
+        matchedKeyword = 'Buds';
+      } else if (text.includes('shoe') || text.includes('shoes') || text.includes('sneaker') || text.includes('sneakers')) {
+        matchedKeyword = 'Sneakers';
+      } else if (text.includes('blender') || text.includes('juicer')) {
+        matchedKeyword = 'Blender';
+      } else if (text.includes('kettle')) {
+        matchedKeyword = 'Kettle';
+      } else if (text.includes('hoodie') || text.includes('hoodies')) {
+        matchedKeyword = 'Hoodie';
+      } else if (text.includes('jacket') || text.includes('jackets')) {
+        matchedKeyword = 'Jacket';
+      } else if (text.includes('mat') || text.includes('yoga')) {
+        matchedKeyword = 'Mat';
+      } else {
+        matchedKeyword = promptText.split(' ').slice(0, 2).join(' ');
+      }
+      setQuery(matchedKeyword);
+      setAiSearching(false);
+    }, 1200);
+  };
+
+  const handleSendChat = () => {
+    if (!chatInput.trim()) return;
+    const userMsg = chatInput;
+    setChatMessages(prev => [...prev, { sender: 'user', text: userMsg }]);
+    setChatInput('');
+    setIsTyping(true);
+
+    setTimeout(() => {
+      setIsTyping(false);
+      const text = userMsg.toLowerCase();
+      let botResponse = "That sounds interesting! You can search our 1,020 high-quality products or ask me to check active warehouse inventories.";
+
+      if (text.includes('track') || text.includes('order')) {
+        botResponse = "You can view all order progress on your Profile page. We track order states dynamically from CONFIRMED -> PROCESSED -> SHIPPED -> DELIVERED!";
+      } else if (text.includes('coupon') || text.includes('discount') || text.includes('promo')) {
+        botResponse = "Try applying coupon codes 'WELCOME10' or 'BIGDISCOUNT' during checkout for up to 20% off!";
+      } else if (text.includes('warehouse') || text.includes('stock') || text.includes('inventory')) {
+        botResponse = "We have fully stocked distribution centers in New York (East Coast) and Los Angeles (West Coast) for overnight shipping!";
+      } else if (text.includes('hello') || text.includes('hi') || text.includes('hey')) {
+        botResponse = "Hello there! How can I assist you with your shopping experience today?";
+      }
+
+      setChatMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
+    }, 1000);
+  };
+
   const fetchFilters = async () => {
     try {
       const catRes = await API.get('/products/categories');
@@ -149,34 +218,91 @@ export const Catalog: React.FC = () => {
           </button>
         </div>
 
-        {/* Rounded Indigo Search Bar */}
-        <div className="max-w-3xl mx-auto relative mt-4 border-2 border-indigo-600 dark:border-indigo-500 rounded-full bg-white dark:bg-slate-950 p-1 flex items-center shadow-md dark:shadow-indigo-500/5 transition-colors duration-200">
-          <div className="flex items-center space-x-2 pl-4 text-slate-450 dark:text-slate-500">
-            <Search className="w-5 h-5" />
-            <span className="text-xs text-slate-300 dark:text-slate-700">|</span>
+        {/* Render Search bar or custom AI NLP box depending on tab selection */}
+        {searchTab === 'ai' ? (
+          <div className="max-w-3xl mx-auto space-y-4">
+            <div className="relative border-2 border-indigo-650 dark:border-indigo-500 rounded-2xl bg-white dark:bg-slate-950 p-4 shadow-md transition-colors duration-200">
+              <div className="flex items-center gap-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 mb-2">
+                <Sparkles className="w-4 h-4 animate-pulse" />
+                <span>AI NATURAL LANGUAGE PARSING SEARCH ACTIVE</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={aiQuery}
+                  onChange={(e) => setAiQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleAISearch(aiQuery);
+                  }}
+                  className="w-full bg-transparent border-none text-slate-900 dark:text-white placeholder-slate-450 dark:placeholder-slate-500 focus:outline-none text-sm px-2 py-1.5"
+                  placeholder="Ask our AI Agent: e.g. 'Find high quality earbuds under 100 dollars' or 'recommend warm hoodies'..."
+                />
+                <button 
+                  onClick={() => handleAISearch(aiQuery)}
+                  className="bg-indigo-650 hover:bg-indigo-750 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition flex items-center gap-1 cursor-pointer shrink-0"
+                >
+                  {aiSearching ? 'Analyzing...' : 'Parse Search'}
+                </button>
+              </div>
+              {aiSearching && (
+                <div className="text-[11px] text-slate-450 dark:text-slate-500 block text-left mt-2 animate-pulse">
+                  🔮 AI Agent: Resolving semantic intents and matching warehouse stocks...
+                </div>
+              )}
+            </div>
+
+            {/* Quick AI Prompts */}
+            <div className="flex flex-wrap gap-2 justify-center text-xs">
+              <button 
+                onClick={() => handleAISearch('List top-rated mechanical keyboards')}
+                className="px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 rounded-full text-slate-700 dark:text-slate-350 font-semibold transition cursor-pointer"
+              >
+                ✨ "List top-rated mechanical keyboards"
+              </button>
+              <button 
+                onClick={() => handleAISearch('Find athletic sports shoes under 50')}
+                className="px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 rounded-full text-slate-700 dark:text-slate-350 font-semibold transition cursor-pointer"
+              >
+                ✨ "Find athletic sports shoes under $50"
+              </button>
+              <button 
+                onClick={() => handleAISearch('Recommend kitchen blenders')}
+                className="px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 rounded-full text-slate-700 dark:text-slate-350 font-semibold transition cursor-pointer"
+              >
+                ✨ "Recommend kitchen blenders"
+              </button>
+            </div>
           </div>
-          
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-transparent border-none pl-2 pr-12 py-2.5 text-slate-900 dark:text-white placeholder-slate-450 dark:placeholder-slate-500 focus:outline-none text-sm"
-            placeholder="Search thousands of buyable products, SKU serials..."
-          />
+        ) : (
+          /* Rounded Indigo Search Bar */
+          <div className="max-w-3xl mx-auto relative mt-4 border-2 border-indigo-600 dark:border-indigo-500 rounded-full bg-white dark:bg-slate-950 p-1 flex items-center shadow-md dark:shadow-indigo-500/5 transition-colors duration-200">
+            <div className="flex items-center space-x-2 pl-4 text-slate-450 dark:text-slate-500">
+              <Search className="w-5 h-5" />
+              <span className="text-xs text-slate-300 dark:text-slate-700">|</span>
+            </div>
+            
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full bg-transparent border-none pl-2 pr-12 py-2.5 text-slate-900 dark:text-white placeholder-slate-450 dark:placeholder-slate-500 focus:outline-none text-sm"
+              placeholder="Search thousands of buyable products, SKU serials..."
+            />
 
-          {/* Camera Mock Icon */}
-          <button 
-            onClick={() => setShowImageSearchModal(true)}
-            className="absolute right-36 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition flex items-center gap-1.5 text-xs font-semibold pr-3 border-r border-slate-200 dark:border-slate-800 focus:outline-none"
-          >
-            <Camera className="w-4.5 h-4.5 text-indigo-500 dark:text-indigo-400" />
-            <span className="hidden sm:inline">Image Search</span>
-          </button>
+            {/* Camera Mock Icon */}
+            <button 
+              onClick={() => setShowImageSearchModal(true)}
+              className="absolute right-36 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition flex items-center gap-1.5 text-xs font-semibold pr-3 border-r border-slate-200 dark:border-slate-800 focus:outline-none"
+            >
+              <Camera className="w-4.5 h-4.5 text-indigo-500 dark:text-indigo-400" />
+              <span className="hidden sm:inline">Image Search</span>
+            </button>
 
-          <button className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold px-7 py-2.5 rounded-full text-sm transition flex items-center gap-1 ml-auto">
-            <Search className="w-4 h-4" /> Search
-          </button>
-        </div>
+            <button className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold px-7 py-2.5 rounded-full text-sm transition flex items-center gap-1 ml-auto cursor-pointer">
+              <Search className="w-4 h-4" /> Search
+            </button>
+          </div>
+        )}
 
         <p className="text-slate-500 dark:text-slate-400 text-xs mt-2">Welcome to rb cart. Browse thousands of buyable products across our worldwide logistics warehouses.</p>
       </div>
@@ -384,15 +510,92 @@ export const Catalog: React.FC = () => {
       {/* Floating Assistance Side panel */}
       <div className="fixed bottom-6 right-6 flex flex-col space-y-3 z-50">
         <button 
-          onClick={() => alert("RB Cart Assistant: Hello! How can I help you negotiate with suppliers today?")}
-          className="p-3.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white rounded-full shadow-xl transition hover:scale-105"
+          onClick={() => setShowAIChat(!showAIChat)}
+          className="p-3.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white rounded-full shadow-xl transition hover:scale-105 cursor-pointer focus:outline-none"
         >
           <MessageCircle className="w-5 h-5" />
         </button>
-        <button className="p-3.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white rounded-full shadow-xl border border-slate-200 dark:border-slate-700 transition">
+        <button className="p-3.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white rounded-full shadow-xl border border-slate-200 dark:border-slate-700 transition focus:outline-none">
           <HelpCircle className="w-5 h-5" />
         </button>
       </div>
+
+      {/* Floating AI Chatbot overlay */}
+      {showAIChat && (
+        <div className="fixed bottom-24 right-6 w-96 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl z-55 flex flex-col overflow-hidden transition-all duration-300 text-slate-800 dark:text-slate-205">
+          {/* Header */}
+          <div className="p-4 bg-indigo-600 dark:bg-indigo-500 text-white flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <MessageCircle className="w-5 h-5" />
+              <div>
+                <span className="font-extrabold block text-xs">RB Cart AI Chatbot</span>
+                <span className="text-[10px] text-indigo-100 flex items-center gap-1 mt-0.5">
+                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full inline-block animate-pulse" /> Online &middot; Instant Help
+                </span>
+              </div>
+            </div>
+            <button 
+              onClick={() => setShowAIChat(false)}
+              className="text-white hover:text-slate-200 text-xs font-bold focus:outline-none cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Messages Area */}
+          <div className="p-4 flex-grow h-72 overflow-y-auto space-y-3.5 bg-slate-50 dark:bg-slate-950/40">
+            {chatMessages.map((m, idx) => (
+              <div 
+                key={idx} 
+                className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div 
+                  className={`max-w-[80%] rounded-2xl p-3 text-xs shadow-sm ${
+                    m.sender === 'user' 
+                      ? 'bg-indigo-600 text-white rounded-tr-none' 
+                      : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 rounded-tl-none border border-slate-200 dark:border-slate-800'
+                  }`}
+                >
+                  {m.text}
+                </div>
+              </div>
+            ))}
+            {isTyping && (
+              <div className="flex justify-start">
+                <div className="bg-white dark:bg-slate-900 text-slate-500 rounded-2xl rounded-tl-none p-3 text-[11px] border border-slate-200 dark:border-slate-800 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" />
+                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]" />
+                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.4s]" />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Input area */}
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSendChat();
+            }}
+            className="p-3 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2"
+          >
+            <input
+              type="text"
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              placeholder="Ask about coupons, warehouse, orders..."
+              className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-250 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none"
+            />
+            <button 
+              type="submit"
+              className="bg-indigo-650 hover:bg-indigo-755 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition focus:outline-none cursor-pointer"
+            >
+              Send
+            </button>
+          </form>
+
+        </div>
+      )}
 
       {/* Interactive Mock Image Search Modal */}
       {showImageSearchModal && (
