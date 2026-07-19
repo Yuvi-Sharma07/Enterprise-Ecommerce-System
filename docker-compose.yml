@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ecomm_postgres
+    environment:
+      POSTGRES_DB: ecomm
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  cache:
+    image: redis:7-alpine
+    container_name: ecomm_redis
+    ports:
+      - "6379:6379"
+
+  backend:
+    build: ./backend
+    container_name: ecomm_backend
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ecomm
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      JWT_SECRET: 9a6ZpG5xK9a6ZpG5xK9a6ZpG5xK9a6ZpG5xK9a6ZpG5xK9a6ZpG5xK9a6ZpG5xK
+    depends_on:
+      - db
+      - cache
+
+  frontend:
+    build: ./frontend
+    container_name: ecomm_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
