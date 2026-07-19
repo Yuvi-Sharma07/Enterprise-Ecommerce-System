@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 const API = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: `${API_BASE_URL}/api`,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -24,36 +26,43 @@ API.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    
-    // Check if unauthorized and request hasn't been retried yet
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
+
       const refreshToken = localStorage.getItem('refreshToken');
-      
+
       if (refreshToken) {
         try {
-          const res = await axios.post('http://localhost:8080/api/auth/refresh-token', {
-            refreshToken: refreshToken,
-          });
-          
+          const res = await axios.post(
+            `${API_BASE_URL}/api/auth/refresh-token`,
+            {
+              refreshToken,
+            }
+          );
+
           if (res.status === 200) {
             const { accessToken, refreshToken: newRefreshToken } = res.data;
+
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', newRefreshToken);
-            
-            // Retry the original request
+
             originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
             return API(originalRequest);
           }
         } catch (refreshError) {
-          console.error("Token refresh failed, logging out...", refreshError);
+          console.error("Token refresh failed", refreshError);
+
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           localStorage.removeItem('user');
+
           window.location.href = '/login';
         }
       }
     }
+
     return Promise.reject(error);
   }
 );
