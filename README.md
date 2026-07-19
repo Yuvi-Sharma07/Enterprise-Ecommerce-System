@@ -1,4 +1,4 @@
-# Enterprise E-Commerce Platform
+# Enterprise Retail E-Commerce Platform
 
 > A production-ready, scalable Full-Stack E-Commerce Platform built using **React, FastAPI, PostgreSQL, Redis, Docker, and AI-powered recommendations**. Designed with modern software engineering principles, clean architecture, secure authentication, and enterprise-grade backend practices.
 
