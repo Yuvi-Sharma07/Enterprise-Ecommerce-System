@@ -51,7 +51,7 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
 
     System.out.println("========== DATA INITIALIZER STARTED ==========");
-
+        throw new RuntimeException("TEST DEPLOY");
     try {
 
         // 1. Seed Roles
