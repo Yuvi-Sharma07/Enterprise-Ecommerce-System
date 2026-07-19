@@ -87,27 +87,67 @@ public class DataInitializer implements CommandLineRunner {
         Brand fitWear = createBrand("FitWear");
         Brand homeStyle = createBrand("HomeStyle");
 
-        // 8. Seed Products
-        Product watch = createProduct("Smartwatch Pro", "Advanced multi-sport tracker with ECG sensor and 7-day battery life.", new BigDecimal("199.99"), "TECH-SW-01", "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600", electronics, techCorp);
-        Product earbuds = createProduct("Wireless Buds Elite", "Active noise cancelling wireless earbuds with premium high-fidelity acoustics.", new BigDecimal("89.99"), "TECH-WE-02", "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600", electronics, techCorp);
-        Product hoodie = createProduct("Denim Jacket Classic", "Comfortable cotton denim hoodie style jacket suitable for winter season wear.", new BigDecimal("59.99"), "WEAR-DJ-03", "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=600", apparel, fitWear);
-        Product mat = createProduct("Eco Yoga Mat", "High density eco-friendly biodegradable material yoga workout positioning mat.", new BigDecimal("29.99"), "SPRT-YM-04", "https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=600", sports, fitWear);
-        Product blender = createProduct("Power Blender 1000", "High speed countertop kitchen blender for juices, shakes, and food preps.", new BigDecimal("129.99"), "KITCH-PB-05", "https://images.unsplash.com/photo-1578643463396-0997cb5328c1?w=600", kitchen, homeStyle);
-
         // 9. Seed Warehouses
         Warehouse nycWh = createWarehouse("NYC East Coast Hub", "New York City", 10000);
         Warehouse laWh = createWarehouse("LA West Coast Hub", "Los Angeles", 8000);
 
-        // 10. Seed Stock Levels
-        createStock(nycWh, watch, 120);
-        createStock(laWh, watch, 80);
+        // 8. Seed Products (1020 items for high-volume buyable catalog)
+        Category[] cats = {electronics, apparel, sports, kitchen};
+        Brand[] brs = {techCorp, fitWear, homeStyle};
 
-        createStock(nycWh, earbuds, 250);
-        createStock(laWh, earbuds, 150);
+        String[][] names = {
+            {"Smartwatch Pro v2", "Ultra Wireless Buds", "Mechanical Keyboard MX", "USB-C Dock Hub"},
+            {"Denim Jacket Classic", "Cotton Hoodie Relaxed", "Leather Sneakers Sport", "Running Shorts Flex"},
+            {"Eco Yoga Mat", "Stainless Steel Flask", "Dumbbell Set 10kg", "Adjustable Jump Rope"},
+            {"Power Blender 1000", "Espresso Coffee Machine", "Non-stick Frying Pan", "Minimalist Desk Lamp"}
+        };
 
-        createStock(nycWh, hoodie, 100);
-        createStock(nycWh, mat, 80);
-        createStock(laWh, blender, 60);
+        String[][] images = {
+            {
+                "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600",
+                "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600",
+                "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600",
+                "https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=600"
+            },
+            {
+                "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=600",
+                "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600",
+                "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600",
+                "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600"
+            },
+            {
+                "https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=600",
+                "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600",
+                "https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?w=600",
+                "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600"
+            },
+            {
+                "https://images.unsplash.com/photo-1578643463396-0997cb5328c1?w=600",
+                "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600",
+                "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=600",
+                "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600"
+            }
+        };
+
+        String[] baseSkus = {"ELEC", "APPR", "SPRT", "KTCH"};
+
+        for (int i = 1; i <= 1020; i++) {
+            int catIdx = i % cats.length;
+            int itemIdx = (i / cats.length) % names[catIdx].length;
+            int brandIdx = i % brs.length;
+
+            String name = names[catIdx][itemIdx] + " #" + i;
+            String desc = "Programmatically generated high-quality wholesale catalog entry " + name + " featuring standard industrial specs, long battery/material durability guarantees.";
+            BigDecimal price = new BigDecimal(10.0 + (i % 250) * 1.99).setScale(2, java.math.RoundingMode.HALF_UP);
+            String sku = "SKU-" + baseSkus[catIdx] + "-" + String.format("%04d", i);
+            String imgUrl = images[catIdx][itemIdx];
+
+            Product seededProduct = createProduct(name, desc, price, sku, imgUrl, cats[catIdx], brs[brandIdx]);
+
+            // Seed Warehouse inventory allocations so they are active and buyable
+            createStock(nycWh, seededProduct, 80 + (i % 40));
+            createStock(laWh, seededProduct, 40 + (i % 30));
+        }
 
         // 11. Seed Coupons
         createCoupon("SUMMER20", DiscountType.PERCENTAGE, new BigDecimal("20.00"), 100);

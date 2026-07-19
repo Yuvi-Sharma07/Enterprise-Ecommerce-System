@@ -27,7 +27,7 @@ export const Catalog: React.FC = () => {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
-  // Alibaba active tabs
+  // Active tabs
   const [searchTab, setSearchTab] = useState<'products' | 'manufacturers' | 'worldwide' | 'ai'>('products');
 
   // Wishlist state
@@ -112,108 +112,108 @@ export const Catalog: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8 px-4 py-6 relative">
-      {/* 1. Alibaba Hero Header Search Banner */}
-      <div className="bg-slate-900/40 p-8 rounded-3xl text-center space-y-6 relative overflow-hidden border border-slate-800">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-amber-500/5 blur-xl pointer-events-none" />
+    <div className="space-y-8 px-4 py-6 relative text-slate-800 dark:text-slate-200 transition-colors duration-200">
+      {/* 1. Hero Header Search Banner */}
+      <div className="bg-slate-100 dark:bg-slate-900/40 p-8 rounded-3xl text-center space-y-6 relative overflow-hidden border border-slate-200 dark:border-slate-850 transition-colors duration-200">
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 blur-xl pointer-events-none" />
         
         {/* Search Mode Tabs */}
-        <div className="flex justify-center space-x-8 text-sm font-bold border-b border-slate-800 pb-3 max-w-md mx-auto">
+        <div className="flex justify-center space-x-8 text-sm font-bold border-b border-slate-200 dark:border-slate-800 pb-3 max-w-md mx-auto">
           <button 
             onClick={() => setSearchTab('ai')}
-            className={`flex items-center gap-1 transition ${searchTab === 'ai' ? 'text-orange-500' : 'text-slate-400 hover:text-white'}`}
+            className={`flex items-center gap-1 transition ${searchTab === 'ai' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-orange-400" /> AI Mode
+            <Sparkles className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" /> AI Mode
           </button>
           <button 
             onClick={() => setSearchTab('products')}
-            className={`transition ${searchTab === 'products' ? 'text-orange-500 border-b-2 border-orange-500 pb-2.5 -mb-3' : 'text-slate-400 hover:text-white'}`}
+            className={`transition ${searchTab === 'products' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400 pb-2.5 -mb-3' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
           >
             Products
           </button>
           <button 
             onClick={() => setSearchTab('manufacturers')}
-            className={`transition ${searchTab === 'manufacturers' ? 'text-orange-500' : 'text-slate-400 hover:text-white'}`}
+            className={`transition ${searchTab === 'manufacturers' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
           >
             Manufacturers
           </button>
           <button 
             onClick={() => setSearchTab('worldwide')}
-            className={`transition ${searchTab === 'worldwide' ? 'text-orange-500' : 'text-slate-400 hover:text-white'}`}
+            className={`transition ${searchTab === 'worldwide' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
           >
             Worldwide
           </button>
         </div>
 
-        {/* Rounded Orange Search Bar */}
-        <div className="max-w-3xl mx-auto relative mt-4 border-2 border-orange-500 rounded-full bg-slate-950 p-1 flex items-center shadow-lg shadow-orange-500/5">
-          <div className="flex items-center space-x-2 pl-4 text-slate-400 text-sm">
-            <Search className="w-5 h-5 text-slate-500" />
-            <span className="text-xs text-slate-600">|</span>
+        {/* Rounded Indigo Search Bar */}
+        <div className="max-w-3xl mx-auto relative mt-4 border-2 border-indigo-600 dark:border-indigo-500 rounded-full bg-white dark:bg-slate-950 p-1 flex items-center shadow-md dark:shadow-indigo-500/5 transition-colors duration-200">
+          <div className="flex items-center space-x-2 pl-4 text-slate-450 dark:text-slate-500">
+            <Search className="w-5 h-5" />
+            <span className="text-xs text-slate-300 dark:text-slate-700">|</span>
           </div>
           
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-transparent border-none pl-2 pr-12 py-2.5 text-white placeholder-slate-500 focus:outline-none text-sm"
-            placeholder="Search matching products, brand models, barcodes..."
+            className="w-full bg-transparent border-none pl-2 pr-12 py-2.5 text-slate-900 dark:text-white placeholder-slate-450 dark:placeholder-slate-500 focus:outline-none text-sm"
+            placeholder="Search thousands of buyable products, SKU serials..."
           />
 
           {/* Camera Mock Icon */}
-          <div className="absolute right-36 cursor-pointer text-slate-400 hover:text-white transition flex items-center gap-1.5 text-xs font-semibold pr-3 border-r border-slate-800">
+          <div className="absolute right-36 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition flex items-center gap-1.5 text-xs font-semibold pr-3 border-r border-slate-200 dark:border-slate-800">
             <Camera className="w-4.5 h-4.5" />
             <span className="hidden sm:inline">Image Search</span>
           </div>
 
-          <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-7 py-2.5 rounded-full text-sm transition flex items-center gap-1 ml-auto">
+          <button className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold px-7 py-2.5 rounded-full text-sm transition flex items-center gap-1 ml-auto">
             <Search className="w-4 h-4" /> Search
           </button>
         </div>
 
-        <p className="text-slate-400 text-xs mt-2">Welcome to E-Comm Platform. Register as Manufacturer, Supplier, or Buyer.</p>
+        <p className="text-slate-500 dark:text-slate-400 text-xs mt-2">Welcome to rb cart. Browse thousands of buyable products across our worldwide logistics warehouses.</p>
       </div>
 
       {/* 2. Three Column Layout: Sidebar Category + Products + Widgets */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Side Category Navigation */}
-        <div className="lg:col-span-3 glass p-5 rounded-2xl h-fit space-y-6">
-          <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-3">
-            <Filter className="w-4 h-4 text-orange-500" /> All Categories
+        <div className="lg:col-span-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-5 rounded-2xl h-fit space-y-6 shadow-sm transition-colors duration-200">
+          <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+            <Filter className="w-4 h-4 text-indigo-500 dark:text-indigo-400" /> Categories
           </h3>
-          <div className="space-y-3.5 text-xs text-slate-400 font-semibold">
+          <div className="space-y-3.5 text-xs text-slate-550 dark:text-slate-400 font-semibold">
             {categories.map((c) => (
               <div 
                 key={c.id}
                 onClick={() => setSelectedCat(selectedCat === c.id.toString() ? '' : c.id.toString())}
                 className={`flex justify-between items-center p-2.5 rounded-lg cursor-pointer transition ${
-                  selectedCat === c.id.toString() ? 'bg-orange-500/10 text-orange-400' : 'hover:bg-slate-800/40 hover:text-white'
+                  selectedCat === c.id.toString() ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'hover:bg-slate-100 dark:hover:bg-slate-800/40 hover:text-slate-950 dark:hover:text-white'
                 }`}
               >
                 <span>{c.name}</span>
-                <span className="text-slate-600 font-bold">&rarr;</span>
+                <span className="text-slate-400 dark:text-slate-600 font-bold">&rarr;</span>
               </div>
             ))}
           </div>
 
           {/* Price Bounds Filter */}
-          <div className="border-t border-slate-800 pt-5 space-y-4">
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wide">Filter Price Bounds</label>
+          <div className="border-t border-slate-200 dark:border-slate-800 pt-5 space-y-4">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Filter Price Bounds</label>
             <div className="grid grid-cols-2 gap-2">
               <input
                 type="number"
                 placeholder="Min"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
-                className="bg-slate-950 border border-slate-800 rounded p-2 text-xs text-white"
+                className="bg-slate-50 dark:bg-slate-950 border border-slate-350 dark:border-slate-800 rounded p-2 text-xs text-slate-900 dark:text-white focus:outline-none"
               />
               <input
                 type="number"
                 placeholder="Max"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
-                className="bg-slate-950 border border-slate-800 rounded p-2 text-xs text-white"
+                className="bg-slate-50 dark:bg-slate-950 border border-slate-350 dark:border-slate-800 rounded p-2 text-xs text-slate-900 dark:text-white focus:outline-none"
               />
             </div>
           </div>
@@ -221,12 +221,12 @@ export const Catalog: React.FC = () => {
 
         {/* Center Main Catalog Grid */}
         <div className="lg:col-span-6 space-y-8">
-          <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Found {products.length} Products</span>
+          <div className="flex justify-between items-center border-b border-slate-205 dark:border-slate-800 pb-3">
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Found {products.length} Products</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-slate-900 border border-slate-800 rounded text-xs text-white p-1"
+              className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded text-xs text-slate-800 dark:text-white p-1"
             >
               <option value="id">Sort: Relevance</option>
               <option value="price">Sort: Price</option>
@@ -236,16 +236,16 @@ export const Catalog: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {products.map((p) => (
-              <div key={p.id} className="glass rounded-2xl overflow-hidden hover:border-orange-500/30 hover:shadow-orange-500/5 transition flex flex-col justify-between">
+              <div key={p.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden hover:border-indigo-500/30 hover:shadow-indigo-500/5 transition flex flex-col justify-between shadow-sm">
                 <div className="relative">
                   <img
                     src={p.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'}
                     alt={p.name}
-                    className="w-full h-44 object-cover border-b border-slate-800"
+                    className="w-full h-44 object-cover border-b border-slate-200 dark:border-slate-800"
                   />
                   <button
                     onClick={() => toggleWishlist(p.id)}
-                    className={`absolute top-3 right-3 p-2 rounded-full glass hover:bg-slate-800 transition ${
+                    className={`absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-800 transition ${
                       wishlistIds.includes(p.id) ? 'text-rose-500' : 'text-slate-400'
                     }`}
                   >
@@ -254,16 +254,16 @@ export const Catalog: React.FC = () => {
                 </div>
                 <div className="p-4 flex-grow flex flex-col justify-between space-y-3">
                   <div>
-                    <span className="text-[10px] font-bold text-orange-400 uppercase tracking-wide">{p.categoryName}</span>
-                    <h3 className="font-extrabold text-base text-white hover:text-orange-400 transition cursor-pointer mt-1">
+                    <span className="text-[10px] font-bold text-indigo-650 dark:text-indigo-400 uppercase tracking-wide">{p.categoryName}</span>
+                    <h3 className="font-extrabold text-base text-slate-900 dark:text-white hover:text-indigo-650 dark:hover:text-indigo-400 transition cursor-pointer mt-1">
                       <Link to={`/product/${p.id}`}>{p.name}</Link>
                     </h3>
-                    <p className="text-slate-400 text-xs line-clamp-2 mt-1">{p.description}</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-xs line-clamp-2 mt-1">{p.description}</p>
                   </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-800">
-                    <span className="text-lg font-black text-white">{formatPrice(p.price)}</span>
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800">
+                    <span className="text-lg font-black text-slate-900 dark:text-white">{formatPrice(p.price)}</span>
                     <span className={`text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wider ${
-                      p.stockLevel > 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
+                      p.stockLevel > 0 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
                     }`}>
                       {p.stockLevel > 0 ? 'In Stock' : 'Out of Stock'}
                     </span>
@@ -272,14 +272,14 @@ export const Catalog: React.FC = () => {
                 {p.stockLevel > 0 && user?.customerId ? (
                   <button
                     onClick={() => addItem(p.id, 1)}
-                    className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold transition flex items-center justify-center gap-1.5 text-xs"
+                    className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold transition flex items-center justify-center gap-1.5 text-xs"
                   >
                     <ShoppingBag className="w-4 h-4" /> Add to Cart
                   </button>
                 ) : (
                   <Link
                     to={`/product/${p.id}`}
-                    className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold transition text-center text-xs"
+                    className="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-bold transition text-center text-xs"
                   >
                     View Details
                   </Link>
@@ -294,7 +294,7 @@ export const Catalog: React.FC = () => {
               <button
                 disabled={page === 0}
                 onClick={() => setPage(page - 1)}
-                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-white text-xs font-semibold disabled:opacity-50 transition"
+                className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-250 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold disabled:opacity-50 transition"
               >
                 Prev
               </button>
@@ -302,7 +302,7 @@ export const Catalog: React.FC = () => {
               <button
                 disabled={page >= totalPages - 1}
                 onClick={() => setPage(page + 1)}
-                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-white text-xs font-semibold disabled:opacity-50 transition"
+                className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-250 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold disabled:opacity-50 transition"
               >
                 Next
               </button>
@@ -313,37 +313,37 @@ export const Catalog: React.FC = () => {
         {/* Right Side Widgets: Frequently Searched / Banners */}
         <div className="lg:col-span-3 space-y-6">
           {/* Frequently searched widget */}
-          <div className="glass p-5 rounded-2xl space-y-4">
-            <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wide border-b border-slate-800 pb-2">Frequently Searched</h3>
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-5 rounded-2xl space-y-4 shadow-sm transition-colors duration-200">
+            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-300 uppercase tracking-wide border-b border-slate-200 dark:border-slate-800 pb-2">Frequently Searched</h3>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
-                <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-orange-500 font-bold"><Zap className="w-5 h-5" /></div>
+              <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
+                <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold"><Zap className="w-5 h-5" /></div>
                 <div>
-                  <span className="text-xs font-bold text-white block">Smart Watches</span>
-                  <span className="text-[10px] text-slate-500">12k+ daily requests</span>
+                  <span className="text-xs font-bold text-slate-800 dark:text-white block">Smart Watches</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-500">12k+ daily requests</span>
                 </div>
               </div>
-              <div className="flex items-center gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
-                <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-cyan-500 font-bold"><Award className="w-5 h-5" /></div>
+              <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
+                <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center text-cyan-600 dark:text-cyan-400 font-bold"><Award className="w-5 h-5" /></div>
                 <div>
-                  <span className="text-xs font-bold text-white block">Acoustic Earbuds</span>
-                  <span className="text-[10px] text-slate-500">8k+ daily requests</span>
+                  <span className="text-xs font-bold text-slate-800 dark:text-white block">Acoustic Earbuds</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-500">8k+ daily requests</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Hot Picks Banner widget */}
-          <div className="relative rounded-2xl overflow-hidden h-64 border border-slate-800 flex flex-col justify-end p-5">
+          <div className="relative rounded-2xl overflow-hidden h-64 border border-slate-200 dark:border-slate-800 flex flex-col justify-end p-5 shadow-sm">
             <img 
               src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600" 
               alt="Promo Banner" 
-              className="absolute inset-0 w-full h-full object-cover brightness-50"
+              className="absolute inset-0 w-full h-full object-cover brightness-50 dark:brightness-40"
             />
             <div className="relative z-10 space-y-2">
-              <span className="text-[10px] bg-orange-500 text-white font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">Hot Picks</span>
+              <span className="text-[10px] bg-indigo-600 dark:bg-indigo-500 text-white font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">Hot Picks</span>
               <h4 className="font-extrabold text-lg text-white">Classic Apparel Fashion</h4>
-              <p className="text-xs text-slate-300">Up to 20% off with promo coupon codes.</p>
+              <p className="text-xs text-slate-200 dark:text-slate-300">Up to 20% off with promo coupon codes.</p>
             </div>
           </div>
         </div>
@@ -351,22 +351,22 @@ export const Catalog: React.FC = () => {
 
       {/* Frequently Viewed Row */}
       {frequentlyViewed.length > 0 && (
-        <div className="glass p-6 rounded-2xl space-y-4">
-          <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-            <Eye className="w-4 h-4 text-orange-500" /> Frequently Viewed Items
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-6 rounded-2xl space-y-4 shadow-sm transition-colors duration-200">
+          <h3 className="text-sm font-bold text-slate-850 dark:text-slate-100 flex items-center gap-2">
+            <Eye className="w-4 h-4 text-indigo-600 dark:text-indigo-400" /> Frequently Viewed Items
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {frequentlyViewed.map((fv) => (
-              <div key={fv.id} className="glass-light p-3 rounded-xl flex items-center space-x-3 hover:border-orange-500/20 transition">
+              <div key={fv.id} className="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-850 hover:border-indigo-550/20 transition flex items-center space-x-3">
                 <img
                   src={fv.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'}
                   alt={fv.name}
-                  className="w-14 h-14 object-cover rounded-lg border border-slate-800"
+                  className="w-14 h-14 object-cover rounded-lg border border-slate-200 dark:border-slate-800"
                 />
                 <div className="min-w-0 flex-grow">
-                  <Link to={`/product/${fv.id}`} className="block text-xs font-bold text-white hover:text-orange-500 truncate">{fv.name}</Link>
-                  <span className="text-[10px] text-slate-500 block truncate">{fv.brandName}</span>
-                  <span className="text-orange-400 font-bold text-xs block mt-0.5">{formatPrice(fv.price)}</span>
+                  <Link to={`/product/${fv.id}`} className="block text-xs font-bold text-slate-800 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 truncate">{fv.name}</Link>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-500 block truncate">{fv.brandName}</span>
+                  <span className="text-indigo-600 dark:text-indigo-400 font-bold text-xs block mt-0.5">{formatPrice(fv.price)}</span>
                 </div>
               </div>
             ))}
@@ -374,15 +374,15 @@ export const Catalog: React.FC = () => {
         </div>
       )}
 
-      {/* Floating Alibaba Assistance Side panel */}
+      {/* Floating Assistance Side panel */}
       <div className="fixed bottom-6 right-6 flex flex-col space-y-3 z-50">
         <button 
-          onClick={() => alert("Alibaba Assistant: Hello! How can I help you negotiate with suppliers today?")}
-          className="p-3.5 bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-xl transition hover:scale-105"
+          onClick={() => alert("RB Cart Assistant: Hello! How can I help you negotiate with suppliers today?")}
+          className="p-3.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white rounded-full shadow-xl transition hover:scale-105"
         >
           <MessageCircle className="w-5 h-5" />
         </button>
-        <button className="p-3.5 bg-slate-850 text-slate-300 hover:text-white rounded-full shadow-xl border border-slate-800 transition">
+        <button className="p-3.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white rounded-full shadow-xl border border-slate-200 dark:border-slate-700 transition">
           <HelpCircle className="w-5 h-5" />
         </button>
       </div>
@@ -456,60 +456,60 @@ export const ProductDetails: React.FC = () => {
     }
   };
 
-  if (!product) return <div className="text-center p-20 text-slate-400">Loading Product details...</div>;
+  if (!product) return <div className="text-center p-20 text-slate-500 dark:text-slate-400">Loading Product details...</div>;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 glass p-8 rounded-3xl">
+    <div className="max-w-5xl mx-auto px-4 py-8 space-y-10 text-slate-800 dark:text-slate-200">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl shadow-sm transition-colors duration-200">
         {/* Product Image */}
         <div>
           <img
             src={product.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'}
             alt={product.name}
-            className="w-full h-96 object-cover rounded-2xl border border-slate-800 shadow-md"
+            className="w-full h-96 object-cover rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm"
           />
         </div>
 
         {/* Product Info */}
         <div className="space-y-6">
           <div className="space-y-2">
-            <span className="text-[10px] font-bold text-orange-400 uppercase tracking-widest bg-orange-500/10 px-3 py-1 rounded-full">{product.categoryName}</span>
-            <h1 className="text-3xl font-extrabold text-white mt-2">{product.name}</h1>
-            <p className="text-slate-400 text-xs">{product.brandName} &bull; SKU: <code className="text-orange-400 font-bold">{product.sku}</code></p>
+            <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest bg-indigo-500/10 px-3 py-1 rounded-full">{product.categoryName}</span>
+            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-2">{product.name}</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-xs">{product.brandName} &bull; SKU: <code className="text-indigo-600 dark:text-indigo-400 font-bold">{product.sku}</code></p>
           </div>
 
-          <div className="flex items-center gap-2 text-yellow-400">
+          <div className="flex items-center gap-2 text-yellow-500 dark:text-yellow-400">
             <Star className="w-4 h-4 fill-current" />
-            <span className="font-bold text-sm">{avgRating ? avgRating.toFixed(1) : 'No Rating'}</span>
+            <span className="font-bold text-sm text-slate-800 dark:text-slate-200">{avgRating ? avgRating.toFixed(1) : 'No Rating'}</span>
             <span className="text-slate-500 text-xs">({reviews.length} reviews)</span>
           </div>
 
-          <p className="text-slate-300 leading-relaxed text-sm">{product.description}</p>
+          <p className="text-slate-650 dark:text-slate-300 leading-relaxed text-sm">{product.description}</p>
 
-          <div className="flex items-center justify-between border-y border-slate-850 py-4">
+          <div className="flex items-center justify-between border-y border-slate-200 dark:border-slate-800 py-4">
             <div>
               <span className="text-slate-500 text-[10px] block font-bold uppercase tracking-wider">Converted Price</span>
-              <span className="text-3xl font-black text-white">{formatPrice(product.price)}</span>
+              <span className="text-3xl font-black text-slate-900 dark:text-white">{formatPrice(product.price)}</span>
             </div>
             {product.stockLevel > 0 ? (
               <button
                 onClick={() => addItem(product.id, 1)}
-                className="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl transition flex items-center gap-2 text-sm shadow-md"
+                className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold rounded-xl transition flex items-center gap-2 text-sm shadow-md"
               >
                 <ShoppingBag className="w-4 h-4" /> Add to Cart
               </button>
             ) : (
-              <span className="px-6 py-2.5 bg-rose-500/10 text-rose-400 rounded-lg font-bold border border-rose-500/20 text-xs">Sold Out</span>
+              <span className="px-6 py-2.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-lg font-bold border border-rose-500/20 text-xs">Sold Out</span>
             )}
           </div>
 
           {/* Barcode details */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="glass-light p-4 rounded-xl text-center space-y-2">
+            <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 p-4 rounded-xl text-center space-y-2">
               <span className="text-[10px] text-slate-500 block font-bold uppercase tracking-wider">1D SKU Barcode</span>
               {barcodeImg ? <img src={barcodeImg} alt="Barcode" className="mx-auto h-12" /> : <div className="text-xs text-slate-650">Generating...</div>}
             </div>
-            <div className="glass-light p-4 rounded-xl text-center space-y-2">
+            <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 p-4 rounded-xl text-center space-y-2">
               <span className="text-[10px] text-slate-500 block font-bold uppercase tracking-wider">QR Code Locator</span>
               {qrcodeImg ? <img src={qrcodeImg} alt="QR Code" className="mx-auto h-16" /> : <div className="text-xs text-slate-650">Generating...</div>}
             </div>
@@ -520,17 +520,17 @@ export const ProductDetails: React.FC = () => {
       {/* Review Submission & Ratings List */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Write Review Form */}
-        <div className="glass p-6 rounded-2xl h-fit space-y-4 col-span-1">
-          <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
-            <Award className="w-4 h-4 text-orange-400" /> Share Feedback
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl h-fit space-y-4 col-span-1 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-800 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3 flex items-center gap-2">
+            <Award className="w-4 h-4 text-indigo-650 dark:text-indigo-400" /> Share Feedback
           </h3>
           <form onSubmit={submitReview} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-400 mb-1">Rating Stars</label>
+              <label className="block text-xs font-bold text-slate-550 dark:text-slate-400 mb-1">Rating Stars</label>
               <select
                 value={rating}
                 onChange={(e) => setRating(Number(e.target.value))}
-                className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-white text-xs"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-350 dark:border-slate-800 rounded p-2 text-slate-805 dark:text-white text-xs focus:outline-none"
               >
                 <option value="5">5 Stars (Excellent)</option>
                 <option value="4">4 Stars (Very Good)</option>
@@ -540,17 +540,17 @@ export const ProductDetails: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-400 mb-1">Review Message</label>
+              <label className="block text-xs font-bold text-slate-550 dark:text-slate-400 mb-1">Review Message</label>
               <textarea
                 value={reviewText}
                 onChange={(e) => setReviewText(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-white text-xs h-24 focus:outline-none"
+                className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-350 dark:border-slate-800 rounded p-2 text-slate-805 dark:text-white text-xs h-24 focus:outline-none"
                 placeholder="Share your experience with this product..."
               />
             </div>
             <button
               type="submit"
-              className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-lg text-xs transition"
+              className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold rounded-lg text-xs transition"
             >
               Post Review
             </button>
@@ -558,25 +558,25 @@ export const ProductDetails: React.FC = () => {
         </div>
 
         {/* Reviews List */}
-        <div className="glass p-6 rounded-2xl col-span-2 space-y-4">
-          <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3">Approved Customer Reviews ({reviews.length})</h3>
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl col-span-2 space-y-4 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-800 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3">Approved Customer Reviews ({reviews.length})</h3>
           {reviews.length === 0 ? (
             <p className="text-slate-500 text-xs">No reviewed entries found for this SKU.</p>
           ) : (
             <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
               {reviews.map((r) => (
-                <div key={r.id} className="glass-light p-4 rounded-xl space-y-2">
+                <div key={r.id} className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-850 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-300">
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
                       {r.customer.firstName} {r.customer.lastName.substring(0, 1)}.
                     </span>
-                    <div className="flex text-yellow-400">
+                    <div className="flex text-yellow-500 dark:text-yellow-400">
                       {Array.from({ length: r.rating }).map((_, i) => (
                         <Star key={i} className="w-3 h-3 fill-current" />
                       ))}
                     </div>
                   </div>
-                  <p className="text-slate-400 text-xs italic">"{r.reviewText}"</p>
+                  <p className="text-slate-650 dark:text-slate-400 text-xs italic">"{r.reviewText}"</p>
                 </div>
               ))}
             </div>
@@ -594,54 +594,54 @@ export const CartPage: React.FC = () => {
   const navigate = useNavigate();
 
   if (!user || !user.customerId) {
-    return <div className="text-center p-20 text-slate-400">Please log in as Customer to access your shopping cart.</div>;
+    return <div className="text-center p-20 text-slate-550 dark:text-slate-400">Please log in as Customer to access your shopping cart.</div>;
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
-      <h2 className="text-2xl font-extrabold text-white">Your Shopping Cart</h2>
+    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8 text-slate-800 dark:text-slate-200">
+      <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Your Shopping Cart</h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart items list */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="glass p-6 rounded-2xl space-y-4">
-            <h3 className="text-xs font-bold text-orange-400 uppercase tracking-wider border-b border-slate-800 pb-2">Active Items ({cartItems.length})</h3>
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
+            <h3 className="text-xs font-bold text-indigo-650 dark:text-indigo-400 uppercase tracking-wider border-b border-slate-202 dark:border-slate-800 pb-2">Active Items ({cartItems.length})</h3>
             {cartItems.length === 0 ? (
               <p className="text-slate-500 text-xs">Your shopping cart is currently empty.</p>
             ) : (
               <div className="space-y-4">
                 {cartItems.map((item) => (
-                  <div key={item.id} className="glass-light p-4 rounded-xl flex items-center justify-between">
+                  <div key={item.id} className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-850 flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <img
                         src={item.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'}
                         alt={item.productName}
-                        className="w-16 h-16 object-cover rounded-lg border border-slate-800"
+                        className="w-16 h-16 object-cover rounded-lg border border-slate-200 dark:border-slate-800"
                       />
                       <div>
-                        <h4 className="font-bold text-white text-sm"><Link to={`/product/${item.productId}`} className="hover:underline">{item.productName}</Link></h4>
-                        <span className="text-orange-400 text-xs font-bold">{formatPrice(item.price)}</span>
+                        <h4 className="font-bold text-slate-800 dark:text-white text-sm"><Link to={`/product/${item.productId}`} className="hover:underline">{item.productName}</Link></h4>
+                        <span className="text-indigo-600 dark:text-indigo-400 text-xs font-bold">{formatPrice(item.price)}</span>
                       </div>
                     </div>
 
                     <div className="flex items-center space-x-4">
-                      <div className="flex items-center bg-slate-950 border border-slate-800 rounded-lg overflow-hidden">
+                      <div className="flex items-center bg-white dark:bg-slate-950 border border-slate-250 dark:border-slate-800 rounded-lg overflow-hidden">
                         <button
                           onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                          className="px-2.5 py-1 text-slate-500 hover:text-white transition"
+                          className="px-2.5 py-1 text-slate-500 hover:text-slate-800 dark:hover:text-white transition"
                         >
                           -
                         </button>
-                        <span className="px-3 py-1 text-white text-xs font-semibold">{item.quantity}</span>
+                        <span className="px-3 py-1 text-slate-800 dark:text-white text-xs font-semibold">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                          className="px-2.5 py-1 text-slate-500 hover:text-white transition"
+                          className="px-2.5 py-1 text-slate-500 hover:text-slate-800 dark:hover:text-white transition"
                         >
                           +
                         </button>
                       </div>
-                      <button onClick={() => toggleSaveForLater(item.productId)} className="text-xs text-orange-400 hover:underline">Save Later</button>
-                      <button onClick={() => removeItem(item.productId)} className="text-xs text-rose-450 hover:underline">Remove</button>
+                      <button onClick={() => toggleSaveForLater(item.productId)} className="text-xs text-indigo-650 dark:text-indigo-400 hover:underline">Save Later</button>
+                      <button onClick={() => removeItem(item.productId)} className="text-xs text-rose-500 hover:underline">Remove</button>
                     </div>
                   </div>
                 ))}
@@ -650,28 +650,28 @@ export const CartPage: React.FC = () => {
           </div>
 
           {/* Saved Items */}
-          <div className="glass p-6 rounded-2xl space-y-4">
-            <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider border-b border-slate-800 pb-2">Saved For Later ({savedItems.length})</h3>
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
+            <h3 className="text-xs font-bold text-slate-700 dark:text-slate-350 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2">Saved For Later ({savedItems.length})</h3>
             {savedItems.length === 0 ? (
-              <p className="text-slate-505 text-xs">No items saved for later.</p>
+              <p className="text-slate-500 text-xs">No items saved for later.</p>
             ) : (
               <div className="space-y-4">
                 {savedItems.map((item) => (
-                  <div key={item.id} className="glass-light p-4 rounded-xl flex items-center justify-between">
+                  <div key={item.id} className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-850 flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <img
                         src={item.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'}
                         alt={item.productName}
-                        className="w-12 h-12 object-cover rounded-lg"
+                        className="w-12 h-12 object-cover rounded-lg border border-slate-200 dark:border-slate-800"
                       />
                       <div>
-                        <h4 className="font-bold text-white text-sm">{item.productName}</h4>
-                        <span className="text-orange-400 text-xs font-bold">{formatPrice(item.price)}</span>
+                        <h4 className="font-bold text-slate-850 dark:text-white text-sm">{item.productName}</h4>
+                        <span className="text-indigo-650 dark:text-indigo-400 text-xs font-bold">{formatPrice(item.price)}</span>
                       </div>
                     </div>
                     <div className="flex space-x-3">
-                      <button onClick={() => toggleSaveForLater(item.productId)} className="text-xs text-emerald-400 hover:underline">Move to Cart</button>
-                      <button onClick={() => removeItem(item.productId)} className="text-xs text-rose-450 hover:underline">Delete</button>
+                      <button onClick={() => toggleSaveForLater(item.productId)} className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline">Move to Cart</button>
+                      <button onClick={() => removeItem(item.productId)} className="text-xs text-rose-500 hover:underline">Delete</button>
                     </div>
                   </div>
                 ))}
@@ -681,18 +681,18 @@ export const CartPage: React.FC = () => {
         </div>
 
         {/* Order Summary Card */}
-        <div className="glass p-6 rounded-2xl h-fit space-y-6">
-          <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-3">Subtotal Summary</h3>
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl h-fit space-y-6 shadow-sm">
+          <h3 className="text-lg font-bold text-slate-850 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3">Subtotal Summary</h3>
           <div className="space-y-3">
-            <div className="flex justify-between text-slate-400 text-xs">
+            <div className="flex justify-between text-slate-500 dark:text-slate-400 text-xs">
               <span>Items Total</span>
               <span>{formatPrice(totalAmount)}</span>
             </div>
-            <div className="flex justify-between text-slate-400 text-xs">
+            <div className="flex justify-between text-slate-500 dark:text-slate-400 text-xs">
               <span>Standard Shipping</span>
-              <span className="text-emerald-400 font-bold">FREE</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold">FREE</span>
             </div>
-            <div className="flex justify-between text-white font-extrabold text-base border-t border-slate-800 pt-3">
+            <div className="flex justify-between text-slate-900 dark:text-white font-extrabold text-base border-t border-slate-200 dark:border-slate-800 pt-3">
               <span>Final Total</span>
               <span>{formatPrice(totalAmount)}</span>
             </div>
@@ -701,7 +701,7 @@ export const CartPage: React.FC = () => {
           <button
             disabled={cartItems.length === 0}
             onClick={() => navigate('/checkout')}
-            className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm"
+            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm"
           >
             Proceed to Secure Checkout <ArrowRight className="w-4 h-4" />
           </button>
@@ -773,74 +773,74 @@ export const CheckoutPage: React.FC = () => {
 
   if (checkoutStep === 'success' && createdOrder) {
     return (
-      <div className="max-w-md mx-auto px-4 py-20 text-center space-y-6">
-        <div className="inline-flex p-4 bg-emerald-500/10 rounded-full text-emerald-400 border border-emerald-500/20">
+      <div className="max-w-md mx-auto px-4 py-20 text-center space-y-6 text-slate-800 dark:text-slate-200">
+        <div className="inline-flex p-4 bg-emerald-500/10 rounded-full text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
           <CheckCircle className="w-16 h-16" />
         </div>
-        <h2 className="text-2xl font-black text-white">Invoice Settlement Successful</h2>
-        <p className="text-slate-400 text-xs">Your payment was processed successfully via Stripe Sandbox.</p>
-        <div className="glass p-5 rounded-2xl text-left space-y-3 text-xs">
-          <div className="flex justify-between text-slate-400"><span>Order ID</span><span className="text-white font-bold">#{createdOrder.id}</span></div>
-          <div className="flex justify-between text-slate-400"><span>Paid Sum</span><span className="text-orange-400 font-bold">{formatPrice(createdOrder.totalAmount)}</span></div>
-          <div className="flex justify-between text-slate-400"><span>Status</span><span className="text-emerald-400 font-bold uppercase tracking-wider text-[10px]">{createdOrder.status}</span></div>
+        <h2 className="text-2xl font-black text-slate-900 dark:text-white">Invoice Settlement Successful</h2>
+        <p className="text-slate-500 dark:text-slate-400 text-xs">Your payment was processed successfully via Stripe Sandbox.</p>
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl text-left space-y-3 text-xs shadow-sm">
+          <div className="flex justify-between text-slate-500 dark:text-slate-400"><span>Order ID</span><span className="text-slate-900 dark:text-white font-bold">#{createdOrder.id}</span></div>
+          <div className="flex justify-between text-slate-500 dark:text-slate-400"><span>Paid Sum</span><span className="text-indigo-650 dark:text-indigo-400 font-bold">{formatPrice(createdOrder.totalAmount)}</span></div>
+          <div className="flex justify-between text-slate-500 dark:text-slate-400"><span>Status</span><span className="text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider text-[10px]">{createdOrder.status}</span></div>
         </div>
         <div className="flex space-x-3">
-          <Link to="/" className="w-1/2 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-lg transition text-center text-xs">Continue Shopping</Link>
-          <Link to="/orders" className="w-1/2 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-lg transition text-center text-xs">Order History</Link>
+          <Link to="/" className="w-1/2 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-lg transition text-center text-xs border border-slate-200 dark:border-slate-700">Continue Shopping</Link>
+          <Link to="/orders" className="w-1/2 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold rounded-lg transition text-center text-xs">Order History</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
-      <h2 className="text-2xl font-extrabold text-white">Secure Checkout</h2>
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8 text-slate-800 dark:text-slate-200">
+      <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Secure Checkout</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Billing and Stripe details */}
-        <form onSubmit={handleCheckout} className="md:col-span-2 glass p-6 rounded-2xl space-y-6">
-          <h3 className="text-sm font-bold text-white border-b border-slate-805 pb-2 flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-orange-400" /> Stripe Sandbox Payment
+        <form onSubmit={handleCheckout} className="md:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl space-y-6 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-850 dark:text-white border-b border-slate-202 dark:border-slate-800 pb-2 flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-indigo-550 dark:text-indigo-400" /> Stripe Sandbox Payment
           </h3>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs text-slate-300 font-semibold mb-1">Credit Card Number</label>
+              <label className="block text-xs text-slate-650 dark:text-slate-350 font-semibold mb-1">Credit Card Number</label>
               <input
                 type="text"
                 required
-                className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-white text-xs focus:outline-none"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-850 rounded p-2 text-slate-900 dark:text-white text-xs focus:outline-none"
                 placeholder="4242 4242 4242 4242 (Stripe Sandbox)"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-slate-300 font-semibold mb-1">Expiration</label>
+                <label className="block text-xs text-slate-655 dark:text-slate-350 font-semibold mb-1">Expiration</label>
                 <input
                   type="text"
                   required
                   placeholder="12/28"
-                  className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-white text-xs focus:outline-none"
+                  className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-300 dark:border-slate-850 rounded p-2 text-slate-900 dark:text-white text-xs focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs text-slate-300 font-semibold mb-1">CVC Code</label>
+                <label className="block text-xs text-slate-655 dark:text-slate-350 font-semibold mb-1">CVC Code</label>
                 <input
                   type="text"
                   required
                   placeholder="123"
-                  className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-white text-xs focus:outline-none"
+                  className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-300 dark:border-slate-850 rounded p-2 text-slate-900 dark:text-white text-xs focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs text-slate-300 font-semibold mb-1">Stripe Sandbox Card Token</label>
+              <label className="block text-xs text-slate-655 dark:text-slate-350 font-semibold mb-1">Stripe Sandbox Card Token</label>
               <select
                 value={stripeToken}
                 onChange={(e) => setStripeToken(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-white text-xs"
+                className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-300 dark:border-slate-850 rounded p-2 text-slate-850 dark:text-white text-xs focus:outline-none"
               >
                 <option value="pm_card_visa">Visa Standard Sandbox (Succeeds)</option>
                 <option value="pm_card_chargeDeclined">Visa Declined Sandbox (Fails)</option>
@@ -851,47 +851,47 @@ export const CheckoutPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading || cartItems.length === 0}
-            className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 font-bold rounded-lg text-xs shadow-lg transition flex items-center justify-center gap-2"
+            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold rounded-lg text-xs shadow-md transition flex items-center justify-center gap-2"
           >
             {loading ? 'Settling Payment Intent...' : `Pay ${formatPrice(getDiscountedTotal())}`}
           </button>
         </form>
 
         {/* Invoice Summary with Coupon block */}
-        <div className="glass p-6 rounded-2xl h-fit space-y-6">
-          <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-2">Invoice Summary</h3>
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl h-fit space-y-6 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-800 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-2">Invoice Summary</h3>
           
           {/* Coupon inputs */}
           <div className="space-y-2">
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Apply Promo Coupon</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">Apply Promo Coupon</span>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value)}
                 placeholder="E.g. SUMMER20"
-                className="bg-slate-900 border border-slate-800 rounded px-3 py-1.5 text-white text-xs w-2/3"
+                className="bg-slate-50 dark:bg-slate-955 border border-slate-300 dark:border-slate-850 rounded px-3 py-1.5 text-slate-850 dark:text-white text-xs w-2/3 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={applyCoupon}
-                className="w-1/3 bg-slate-850 hover:bg-slate-800 text-white font-bold rounded text-xs py-1.5 transition"
+                className="w-1/3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-800 dark:text-white font-bold rounded text-xs py-1.5 transition border border-slate-200 dark:border-slate-700"
               >
                 Apply
               </button>
             </div>
             {couponError && <span className="text-rose-500 text-[10px]">{couponError}</span>}
             {appliedDiscount && (
-              <div className="text-[10px] text-emerald-400 flex items-center gap-1">
+              <div className="text-[10px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                 <Tag className="w-3 h-3" /> Coupon '{appliedDiscount.code}' applied: {appliedDiscount.discountValue}% off
               </div>
             )}
           </div>
 
-          <div className="space-y-3 pt-4 border-t border-slate-800 text-xs">
-            <div className="flex justify-between text-slate-400"><span>Cart Subtotal</span><span>{formatPrice(totalAmount)}</span></div>
+          <div className="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-800 text-xs">
+            <div className="flex justify-between text-slate-500 dark:text-slate-400"><span>Cart Subtotal</span><span>{formatPrice(totalAmount)}</span></div>
             {appliedDiscount && (
-              <div className="flex justify-between text-emerald-400 font-bold">
+              <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-bold">
                 <span>Discount</span>
                 <span>
                   -{appliedDiscount.discountType === 'PERCENTAGE' 
@@ -900,7 +900,7 @@ export const CheckoutPage: React.FC = () => {
                 </span>
               </div>
             )}
-            <div className="flex justify-between text-white font-extrabold text-sm border-t border-slate-800 pt-3">
+            <div className="flex justify-between text-slate-900 dark:text-white font-extrabold text-sm border-t border-slate-200 dark:border-slate-800 pt-3">
               <span>Grand Total</span>
               <span>{formatPrice(getDiscountedTotal())}</span>
             </div>
@@ -953,40 +953,40 @@ export const CustomerProfile: React.FC = () => {
   };
 
   if (!user || !user.customerId) {
-    return <div className="text-center p-20 text-slate-400">Please log in as Customer to view your order history.</div>;
+    return <div className="text-center p-20 text-slate-550 dark:text-slate-400">Please log in as Customer to view your order history.</div>;
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
-      <h2 className="text-2xl font-extrabold text-white">Your Order History</h2>
+    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8 text-slate-850 dark:text-slate-200">
+      <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Your Order History</h2>
 
       <div className="space-y-6">
         {orders.length === 0 ? (
-          <p className="text-slate-500 text-xs glass p-8 rounded-2xl text-center">You haven't placed any orders yet.</p>
+          <p className="text-slate-500 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl text-center shadow-sm">You haven't placed any orders yet.</p>
         ) : (
           orders.map((o) => (
-            <div key={o.id} className="glass p-6 rounded-2xl space-y-4">
+            <div key={o.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm transition-colors duration-200">
               {/* Order Header */}
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-800 pb-3 gap-3">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 dark:border-slate-800 pb-3 gap-3">
                 <div>
                   <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wider">Order ID</span>
-                  <span className="font-extrabold text-white">#{o.id}</span>
+                  <span className="font-extrabold text-slate-900 dark:text-white">#{o.id}</span>
                 </div>
                 <div className="flex flex-wrap gap-4 items-center">
                   <div className="text-left sm:text-right">
                     <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wider">Date</span>
-                    <span className="text-slate-300 font-medium text-xs">{o.createdAt.substring(0, 10)}</span>
+                    <span className="text-slate-650 dark:text-slate-300 font-medium text-xs">{o.createdAt.substring(0, 10)}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-500 font-bold block uppercase tracking-wider text-left sm:text-right">Total Paid</span>
-                    <span className="text-orange-400 font-black text-xs">{formatPrice(o.totalAmount)}</span>
+                    <span className="text-[10px] text-slate-505 font-bold block uppercase tracking-wider text-left sm:text-right">Total Paid</span>
+                    <span className="text-indigo-600 dark:text-indigo-400 font-black text-xs">{formatPrice(o.totalAmount)}</span>
                   </div>
                   <div>
                     <span className="text-[10px] text-slate-505 font-bold block uppercase tracking-wider text-left sm:text-right">Status</span>
                     <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${
-                      o.status === 'CANCELLED' || o.status === 'REFUNDED' ? 'bg-rose-500/10 text-rose-450' :
-                      o.status === 'DELIVERED' || o.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-400' :
-                      'bg-yellow-500/10 text-yellow-455'
+                      o.status === 'CANCELLED' || o.status === 'REFUNDED' ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400' :
+                      o.status === 'DELIVERED' || o.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-650 dark:text-emerald-400' :
+                      'bg-yellow-500/10 text-yellow-600 dark:text-yellow-450'
                     }`}>
                       {o.status}
                     </span>
@@ -997,16 +997,16 @@ export const CustomerProfile: React.FC = () => {
               {/* Items in Order */}
               <div className="space-y-2">
                 {o.items.map((item: any, i: number) => (
-                  <div key={i} className="flex justify-between text-xs text-slate-300">
-                    <span>{item.productName} <span className="text-slate-500 font-semibold">x{item.quantity}</span></span>
-                    <span className="font-bold text-slate-400">{formatPrice(item.price * item.quantity)}</span>
+                  <div key={i} className="flex justify-between text-xs text-slate-600 dark:text-slate-300">
+                    <span>{item.productName} <span className="text-slate-450 dark:text-slate-500 font-semibold">x{item.quantity}</span></span>
+                    <span className="font-bold text-slate-700 dark:text-slate-400">{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
 
               {/* Timeline Status */}
-              <div className="bg-slate-950 p-4 rounded-xl space-y-4">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block flex items-center gap-1"><Clock className="w-4 h-4 text-orange-500" /> Tracking Status Timeline</span>
+              <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl space-y-4 border border-slate-200 dark:border-slate-850">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block flex items-center gap-1"><Clock className="w-4 h-4 text-indigo-500 dark:text-indigo-400" /> Tracking Status Timeline</span>
                 <div className="flex items-center justify-between overflow-x-auto py-2 pr-4 space-x-4 min-w-max">
                   {['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'COMPLETED'].map((step, idx) => {
                     const steps = ['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'COMPLETED'];
@@ -1017,11 +1017,11 @@ export const CustomerProfile: React.FC = () => {
                     return (
                       <div key={step} className="flex items-center space-x-2">
                         <div className={`w-3 h-3 rounded-full border-2 ${
-                          isCurrent ? 'bg-orange-500 border-orange-400 scale-125' :
-                          isDone ? 'bg-emerald-500 border-emerald-400' : 'bg-slate-800 border-slate-700'
+                          isCurrent ? 'bg-indigo-600 dark:bg-indigo-500 border-indigo-400 scale-125' :
+                          isDone ? 'bg-emerald-500 border-emerald-400' : 'bg-slate-200 dark:bg-slate-800 border-slate-350 dark:border-slate-700'
                         }`} />
                         <span className={`text-[9px] font-bold tracking-wide uppercase ${
-                          isCurrent ? 'text-orange-500 font-black' : isDone ? 'text-emerald-400' : 'text-slate-500'
+                          isCurrent ? 'text-indigo-600 dark:text-indigo-500 font-black' : isDone ? 'text-emerald-600 dark:text-emerald-450' : 'text-slate-400 dark:text-slate-500'
                         }`}>{step}</span>
                       </div>
                     );
@@ -1032,13 +1032,13 @@ export const CustomerProfile: React.FC = () => {
               {/* Actions Footer */}
               <div className="flex justify-end gap-3 pt-2">
                 {o.trackingNumber && (
-                  <span className="text-[10px] text-slate-500 font-medium self-center">Tracking: <code className="text-orange-400">{o.trackingNumber}</code></span>
+                  <span className="text-[10px] text-slate-500 font-medium self-center">Tracking: <code className="text-indigo-600 dark:text-indigo-400">{o.trackingNumber}</code></span>
                 )}
                 
                 {(o.status === 'PENDING' || o.status === 'CONFIRMED') && (
                   <button
                     onClick={() => requestCancel(o.id)}
-                    className="px-4 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-lg text-xs font-bold transition"
+                    className="px-4 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-450 border border-rose-500/20 rounded-lg text-xs font-bold transition"
                   >
                     Request Cancel
                   </button>
@@ -1047,7 +1047,7 @@ export const CustomerProfile: React.FC = () => {
                 {(o.status === 'DELIVERED' || o.status === 'COMPLETED') && (
                   <button
                     onClick={() => requestReturn(o.id)}
-                    className="px-4 py-1.5 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 border border-yellow-500/20 rounded-lg text-xs font-bold transition"
+                    className="px-4 py-1.5 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600 dark:text-yellow-450 border border-yellow-500/20 rounded-lg text-xs font-bold transition"
                   >
                     File Return
                   </button>
