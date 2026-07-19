@@ -142,14 +142,14 @@ public class DataInitializer implements CommandLineRunner {
             {
                 "https://images.unsplash.com/photo-1578643463396-0997cb5328c1?w=600",
                 "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600",
-                "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=600",
+                "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=600",
                 "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600",
                 "https://images.unsplash.com/photo-1531234799389-dcb7651eb0a2?w=600",
-                "https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=600",
+                "https://images.unsplash.com/photo-1593113630400-ea4288922497?w=600",
                 "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600",
                 "https://images.unsplash.com/photo-1530062845289-445889f9e113?w=600",
                 "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600",
-                "https://images.unsplash.com/photo-1585518419759-7fe2ec7f3e5e?w=600"
+                "https://images.unsplash.com/photo-1583554766824-317936058895?w=600"
             }
         };
 
