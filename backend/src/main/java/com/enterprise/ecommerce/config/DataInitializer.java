@@ -59,11 +59,10 @@ System.out.println("Roles OK");
         // 2. Check if DB is already seeded
         System.out.println("Users Count = " + userRepository.count());
 
-        if (userRepository.count() > 0) {
+        if (productRepository.count() > 0) {
     System.out.println("Already Seeded");
     return;
-
-        }
+}
 
         // 3. Seed Users
         User adminUser = createUser("admin@ecomm.com", "admin123", RoleName.ROLE_ADMIN);
