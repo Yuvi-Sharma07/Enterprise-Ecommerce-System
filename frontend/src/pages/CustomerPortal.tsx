@@ -7,7 +7,7 @@ import API from '../services/api';
 import { 
   Search, Filter, ShoppingBag, Eye, Heart, Star, Award, 
   CheckCircle, Tag, Clock, ArrowRight, ShieldCheck, 
-  Camera, MessageCircle, HelpCircle, Zap, Sparkles 
+  Camera, MessageCircle, Zap, Sparkles 
 } from 'lucide-react';
 
 export const Catalog: React.FC = () => {
@@ -184,6 +184,29 @@ export const Catalog: React.FC = () => {
     }
   };
 
+  const mockManufacturers = [
+    { name: 'TechCorp Industry Inc.', location: 'New York, US', rating: 4.9, activeWarehouses: ['NYC Warehouse Hub'], category: 'Electronics & Gadgets' },
+    { name: 'FitWear Apparel Ltd.', location: 'Los Angeles, US', rating: 4.8, activeWarehouses: ['LA Distribution Center'], category: 'Apparel & Fashion' },
+    { name: 'HomeStyle Designs LLC', location: 'London, UK', rating: 4.7, activeWarehouses: ['NYC Warehouse Hub', 'LA Distribution Center'], category: 'Sports & Kitchen' },
+    { name: 'GymGear Logistics Corp', location: 'Frankfurt, DE', rating: 4.9, activeWarehouses: ['LA Distribution Center'], category: 'Sports & Outdoors' }
+  ];
+
+  const mockWarehouses = [
+    { name: 'East Coast NYC Warehouse Hub', code: 'WH-NYC-01', location: 'Queens, New York', capacity: '85% Active', shippingRoutes: ['North America', 'Europe'], coordinates: '40.7128° N, 74.0060° W' },
+    { name: 'West Coast LA Distribution Center', code: 'WH-LAX-02', location: 'Los Angeles, California', capacity: '60% Active', shippingRoutes: ['North America', 'Asia-Pacific'], coordinates: '34.0522° N, 118.2437° W' },
+    { name: 'Eurozone Frankfurt Fulfillment Hub', code: 'WH-FRA-03', location: 'Frankfurt, Germany', capacity: '40% Active', shippingRoutes: ['Europe', 'Africa'], coordinates: '50.1109° N, 8.6821° E' }
+  ];
+
+  const filteredManufacturers = mockManufacturers.filter(m => 
+    m.name.toLowerCase().includes(query.toLowerCase()) || 
+    m.category.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const filteredWarehouses = mockWarehouses.filter(w => 
+    w.name.toLowerCase().includes(query.toLowerCase()) || 
+    w.code.toLowerCase().includes(query.toLowerCase())
+  );
+
   return (
     <div className="space-y-8 px-4 py-6 relative text-slate-800 dark:text-slate-200 transition-colors duration-200">
       {/* 1. Hero Header Search Banner */}
@@ -354,92 +377,172 @@ export const Catalog: React.FC = () => {
 
         {/* Center Main Catalog Grid */}
         <div className="lg:col-span-6 space-y-8">
-          <div className="flex justify-between items-center border-b border-slate-205 dark:border-slate-800 pb-3">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Found {products.length} Products</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded text-xs text-slate-800 dark:text-white p-1"
-            >
-              <option value="id">Sort: Relevance</option>
-              <option value="price">Sort: Price</option>
-              <option value="name">Sort: Name</option>
-            </select>
-          </div>
+          {searchTab === 'manufacturers' ? (
+            <div className="space-y-6">
+              <div className="border-b border-slate-205 dark:border-slate-800 pb-3">
+                <h3 className="font-extrabold text-lg text-slate-900 dark:text-white flex items-center gap-1.5">
+                  🏢 Verified Manufacturers Directory
+                </h3>
+                <p className="text-xs text-slate-550 mt-1">Audit certifications and factory locations for connected suppliers:</p>
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {products.map((p) => (
-              <div key={p.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden hover:border-indigo-500/30 hover:shadow-indigo-500/5 transition flex flex-col justify-between shadow-sm">
-                <div className="relative">
-                  <img
-                    src={p.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'}
-                    alt={p.name}
-                    className="w-full h-44 object-cover border-b border-slate-200 dark:border-slate-800"
-                  />
-                  <button
-                    onClick={() => toggleWishlist(p.id)}
-                    className={`absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-800 transition ${
-                      wishlistIds.includes(p.id) ? 'text-rose-500' : 'text-slate-400'
-                    }`}
-                  >
-                    <Heart className="w-4 h-4 fill-current" />
-                  </button>
-                </div>
-                <div className="p-4 flex-grow flex flex-col justify-between space-y-3">
-                  <div>
-                    <span className="text-[10px] font-bold text-indigo-650 dark:text-indigo-400 uppercase tracking-wide">{p.categoryName}</span>
-                    <h3 className="font-extrabold text-base text-slate-900 dark:text-white hover:text-indigo-650 dark:hover:text-indigo-400 transition cursor-pointer mt-1">
-                      <Link to={`/product/${p.id}`}>{p.name}</Link>
-                    </h3>
-                    <p className="text-slate-500 dark:text-slate-400 text-xs line-clamp-2 mt-1">{p.description}</p>
+              <div className="grid grid-cols-1 gap-4">
+                {filteredManufacturers.map((m, idx) => (
+                  <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-5 rounded-2xl shadow-sm hover:border-indigo-500/30 transition space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[10px] bg-indigo-500/10 text-indigo-650 dark:text-indigo-400 px-2 py-0.5 rounded font-extrabold tracking-wide uppercase">{m.category}</span>
+                        <h4 className="font-bold text-base text-slate-900 dark:text-white mt-1.5">{m.name}</h4>
+                        <span className="text-xs text-slate-500 block mt-0.5">🏭 Main Office: {m.location}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">⭐ {m.rating} / 5.0</span>
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-450 font-bold block mt-1">Verified Supplier</span>
+                      </div>
+                    </div>
+                    <div className="border-t border-slate-100 dark:border-slate-850 pt-3 flex flex-wrap gap-2 text-[10px] uppercase font-bold text-slate-450">
+                      <span>Warehouse Links:</span>
+                      {m.activeWarehouses.map((w, wIdx) => (
+                        <span key={wIdx} className="bg-slate-50 dark:bg-slate-950 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">{w}</span>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800">
-                    <span className="text-lg font-black text-slate-900 dark:text-white">{formatPrice(p.price)}</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wider ${
-                      p.stockLevel > 0 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
-                    }`}>
-                      {p.stockLevel > 0 ? 'In Stock' : 'Out of Stock'}
-                    </span>
-                  </div>
-                </div>
-                {p.stockLevel > 0 && user?.customerId ? (
-                  <button
-                    onClick={() => addItem(p.id, 1)}
-                    className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold transition flex items-center justify-center gap-1.5 text-xs"
-                  >
-                    <ShoppingBag className="w-4 h-4" /> Add to Cart
-                  </button>
-                ) : (
-                  <Link
-                    to={`/product/${p.id}`}
-                    className="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-bold transition text-center text-xs"
-                  >
-                    View Details
-                  </Link>
+                ))}
+                {filteredManufacturers.length === 0 && (
+                  <div className="text-center py-10 text-slate-455">No verified manufacturers matched your query.</div>
                 )}
               </div>
-            ))}
-          </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center space-x-2">
-              <button
-                disabled={page === 0}
-                onClick={() => setPage(page - 1)}
-                className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-250 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold disabled:opacity-50 transition"
-              >
-                Prev
-              </button>
-              <span className="text-slate-500 text-xs">Page {page + 1} of {totalPages}</span>
-              <button
-                disabled={page >= totalPages - 1}
-                onClick={() => setPage(page + 1)}
-                className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-250 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold disabled:opacity-50 transition"
-              >
-                Next
-              </button>
             </div>
+          ) : searchTab === 'worldwide' ? (
+            <div className="space-y-6">
+              <div className="border-b border-slate-205 dark:border-slate-800 pb-3">
+                <h3 className="font-extrabold text-lg text-slate-900 dark:text-white flex items-center gap-1.5">
+                  🌍 Global Warehouse Logistics Network
+                </h3>
+                <p className="text-xs text-slate-550 mt-1">Live capacity loads and transit routing lines across international fulfillment centers:</p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
+                {filteredWarehouses.map((w, idx) => (
+                  <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-5 rounded-2xl shadow-sm hover:border-indigo-500/30 transition space-y-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[10px] bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 px-2 py-0.5 rounded font-extrabold tracking-wide uppercase">{w.code}</span>
+                        <h4 className="font-bold text-base text-slate-900 dark:text-white mt-1.5">{w.name}</h4>
+                        <span className="text-xs text-slate-500 block mt-0.5">📍 Hub Location: {w.location}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">{w.capacity}</span>
+                        <span className="text-[10px] text-indigo-550 dark:text-indigo-400 font-bold block mt-1">Live Tracking</span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 border-t border-slate-100 dark:border-slate-850 pt-3 text-[11px] text-slate-500">
+                      <div>
+                        <span className="font-bold text-slate-700 dark:text-slate-350 block">Coordinates</span>
+                        <span>{w.coordinates}</span>
+                      </div>
+                      <div>
+                        <span className="font-bold text-slate-700 dark:text-slate-350 block">Shipping Routes</span>
+                        <span>{w.shippingRoutes.join(', ')}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {filteredWarehouses.length === 0 && (
+                  <div className="text-center py-10 text-slate-455">No worldwide logistics hubs matched your query.</div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex justify-between items-center border-b border-slate-205 dark:border-slate-800 pb-3">
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Found {products.length} Products</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded text-xs text-slate-800 dark:text-white p-1"
+                >
+                  <option value="id">Sort: Relevance</option>
+                  <option value="price">Sort: Price</option>
+                  <option value="name">Sort: Name</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {products.map((p) => (
+                  <div key={p.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden hover:border-indigo-500/30 hover:shadow-indigo-500/5 transition flex flex-col justify-between shadow-sm">
+                    <div className="relative">
+                      <img
+                        src={p.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'}
+                        alt={p.name}
+                        className="w-full h-44 object-cover border-b border-slate-200 dark:border-slate-800"
+                      />
+                      <button
+                        onClick={() => toggleWishlist(p.id)}
+                        className={`absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-800 transition ${
+                          wishlistIds.includes(p.id) ? 'text-rose-500' : 'text-slate-400'
+                        }`}
+                      >
+                        <Heart className="w-4 h-4 fill-current" />
+                      </button>
+                    </div>
+                    <div className="p-4 flex-grow flex flex-col justify-between space-y-3">
+                      <div>
+                        <span className="text-[10px] font-bold text-indigo-650 dark:text-indigo-400 uppercase tracking-wide">{p.categoryName}</span>
+                        <h3 className="font-extrabold text-base text-slate-900 dark:text-white hover:text-indigo-650 dark:hover:text-indigo-400 transition cursor-pointer mt-1">
+                          <Link to={`/product/${p.id}`}>{p.name}</Link>
+                        </h3>
+                        <p className="text-slate-500 dark:text-slate-400 text-xs line-clamp-2 mt-1">{p.description}</p>
+                      </div>
+                      <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800">
+                        <span className="text-lg font-black text-slate-900 dark:text-white">{formatPrice(p.price)}</span>
+                        <span className={`text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wider ${
+                          p.stockLevel > 0 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                        }`}>
+                          {p.stockLevel > 0 ? 'In Stock' : 'Out of Stock'}
+                        </span>
+                      </div>
+                    </div>
+                    {p.stockLevel > 0 && user?.customerId ? (
+                      <button
+                        onClick={() => addItem(p.id, 1)}
+                        className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold transition flex items-center justify-center gap-1.5 text-xs"
+                      >
+                        <ShoppingBag className="w-4 h-4" /> Add to Cart
+                      </button>
+                    ) : (
+                      <Link
+                        to={`/product/${p.id}`}
+                        className="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-bold transition text-center text-xs"
+                      >
+                        View Details
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center space-x-2">
+                  <button
+                    disabled={page === 0}
+                    onClick={() => setPage(page - 1)}
+                    className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-250 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold disabled:opacity-50 transition"
+                  >
+                    Prev
+                  </button>
+                  <span className="text-slate-550 text-xs font-bold">Page {page + 1} of {totalPages}</span>
+                  <button
+                    disabled={page >= totalPages - 1}
+                    onClick={() => setPage(page + 1)}
+                    className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-250 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold disabled:opacity-50 transition"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -514,9 +617,6 @@ export const Catalog: React.FC = () => {
           className="p-3.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white rounded-full shadow-xl transition hover:scale-105 cursor-pointer focus:outline-none"
         >
           <MessageCircle className="w-5 h-5" />
-        </button>
-        <button className="p-3.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white rounded-full shadow-xl border border-slate-200 dark:border-slate-700 transition focus:outline-none">
-          <HelpCircle className="w-5 h-5" />
         </button>
       </div>
 
