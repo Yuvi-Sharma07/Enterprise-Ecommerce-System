@@ -1,0 +1,15 @@
+# System/Build outputs
+**/target/
+**/node_modules/
+**/dist/
+.idea/
+.vscode/
+*.class
+*.jar
+*.war
+*.log
+.DS_Store
+
+# Exclude implementation plan and readme from git tracking for remote professionalism
+implementation_plan.md
+README.md
