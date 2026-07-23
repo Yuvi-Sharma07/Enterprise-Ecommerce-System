@@ -1,0 +1,287 @@
+<div class="space-y-8 px-6 py-6 text-slate-800 dark:text-slate-200">
+  <!-- Title -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white">Admin Operations</h2>
+      <p class="text-slate-500 dark:text-slate-400 text-sm">Monitor platform metrics, manage products, audit actions</p>
+    </div>
+    <button
+      (click)="loadData()"
+      class="p-2 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+    >
+      <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 6.578M3 20v-5h.581"/></svg>
+      Refresh
+    </button>
+  </div>
+
+  @if (kpis()) {
+    <!-- KPI metrics grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-6 rounded-2xl flex items-center justify-between shadow-sm">
+        <div>
+          <span class="text-xs text-slate-500 dark:text-slate-400 font-bold block uppercase tracking-wider">Total Sales Revenue</span>
+          <span class="text-2xl font-black text-slate-900 dark:text-white mt-1 block">{{ currencyService.formatPrice(kpis().totalRevenue) }}</span>
+        </div>
+        <div class="p-3.5 bg-indigo-500/10 text-indigo-650 dark:text-indigo-400 rounded-xl">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-6 rounded-2xl flex items-center justify-between shadow-sm">
+        <div>
+          <span class="text-xs text-slate-550 dark:text-slate-400 font-bold block uppercase tracking-wider">Active Placed Orders</span>
+          <span class="text-2xl font-black text-slate-900 dark:text-white mt-1 block">{{ kpis().totalOrders }}</span>
+        </div>
+        <div class="p-3.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-6 rounded-2xl flex items-center justify-between shadow-sm">
+        <div>
+          <span class="text-xs text-slate-550 dark:text-slate-400 font-bold block uppercase tracking-wider">Registered Accounts</span>
+          <span class="text-2xl font-black text-slate-900 dark:text-white mt-1 block">{{ kpis().totalUsers }}</span>
+        </div>
+        <div class="p-3.5 bg-cyan-500/10 text-cyan-650 dark:text-cyan-400 rounded-xl">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-6 rounded-2xl flex items-center justify-between shadow-sm">
+        <div>
+          <span class="text-xs text-slate-550 dark:text-slate-400 font-bold block uppercase tracking-wider">Low Stock SKUs</span>
+          <span class="text-2xl font-black text-rose-500 dark:text-rose-400 mt-1 block">{{ kpis().lowStockAlerts }}</span>
+        </div>
+        <div class="p-3.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-xl">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Admin navigation tabs -->
+  <div class="flex border-b border-slate-200 dark:border-slate-800 text-sm font-bold gap-6">
+    <button (click)="activeTab.set('analytics')" [class]="'pb-3 relative cursor-pointer focus:outline-none ' + (activeTab() === 'analytics' ? 'text-indigo-600 dark:text-indigo-400 font-black border-b-2 border-indigo-650' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white')">📈 Analytics</button>
+    <button (click)="activeTab.set('products')" [class]="'pb-3 relative cursor-pointer focus:outline-none ' + (activeTab() === 'products' ? 'text-indigo-600 dark:text-indigo-400 font-black border-b-2 border-indigo-650' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white')">📦 Manage Products</button>
+    <button (click)="activeTab.set('reviews')" [class]="'pb-3 relative cursor-pointer focus:outline-none ' + (activeTab() === 'reviews' ? 'text-indigo-600 dark:text-indigo-400 font-black border-b-2 border-indigo-650' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white')">⭐ Reviews Approval ({{ pendingReviews().length }})</button>
+    <button (click)="activeTab.set('logs')" [class]="'pb-3 relative cursor-pointer focus:outline-none ' + (activeTab() === 'logs' ? 'text-indigo-600 dark:text-indigo-400 font-black border-b-2 border-indigo-655' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white')">🛡️ Audit Logs</button>
+  </div>
+
+  @if (loading()) {
+    <div class="text-center py-20 text-slate-500">Retrieving database configurations...</div>
+  } @else {
+    <!-- Tab panels -->
+    @if (activeTab() === 'analytics') {
+      <div class="space-y-6">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm">
+          <h3 class="font-extrabold text-base text-slate-900 dark:text-white mb-4">Linear Regression: 30-Day Revenue Forecasting</h3>
+          
+          @if (forecast().length > 0) {
+            <!-- Premium Custom SVG Chart -->
+            <div class="relative w-full overflow-hidden">
+              <svg viewBox="0 0 600 200" class="w-full h-56 overflow-visible">
+                <!-- Gradients -->
+                <defs>
+                  <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#4f46e5" stop-opacity="0.3"></stop>
+                    <stop offset="100%" stop-color="#4f46e5" stop-opacity="0.0"></stop>
+                  </linearGradient>
+                </defs>
+
+                <!-- Gridlines -->
+                @for (y of svgGridlines(); track y) {
+                  <line x1="0" [attr.y1]="y" x2="600" [attr.y2]="y" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1"></line>
+                }
+
+                <!-- Area Gradient Fill -->
+                <polygon 
+                  [attr.points]="'0,200 ' + svgPoints() + ' 600,200'" 
+                  fill="url(#chartGrad)"
+                ></polygon>
+
+                <!-- Line Path -->
+                <polyline 
+                  fill="none" 
+                  stroke="#4f46e5" 
+                  stroke-width="3" 
+                  [attr.points]="svgPoints()"
+                ></polyline>
+
+                <!-- Data Dots -->
+                @for (d of forecast(); track d.date; let idx = $index) {
+                  @if (d.revenue || d.value) {
+                    <circle 
+                      [attr.cx]="(idx / (forecast().length - 1)) * 600" 
+                      [attr.cy]="200 - ((d.revenue || d.value) / (kpis().totalRevenue || 1)) * 200 * 0.5" 
+                      r="4" 
+                      fill="#818cf8" 
+                      stroke="#0b0f19" 
+                      stroke-width="2"
+                    ></circle>
+                  }
+                }
+              </svg>
+            </div>
+            
+            <div class="flex justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2.5">
+              <span>{{ forecast()[0].date }}</span>
+              <span>Predicted Forecast Path</span>
+              <span>{{ forecast()[forecast().length - 1].date }}</span>
+            </div>
+          } @else {
+            <p class="text-xs text-slate-500">Insufficient forecasting logs to generate prediction maps.</p>
+          }
+        </div>
+      </div>
+    }
+
+    @if (activeTab() === 'products') {
+      <div class="space-y-6">
+        <div class="flex justify-between items-center">
+          <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Active Catalog Products ({{ products().length }})</h3>
+          <button
+            (click)="showProductForm.set(true)"
+            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-755 text-white font-bold rounded-lg text-xs transition cursor-pointer border-none"
+          >
+            Add New Product
+          </button>
+        </div>
+
+        @if (showProductForm()) {
+          <div class="glass p-6 rounded-2xl max-w-2xl space-y-4">
+            <h4 class="font-bold text-base text-indigo-400 uppercase tracking-wide">{{ editingProduct() ? 'Modify Catalog SKU' : 'Register New Catalog SKU' }}</h4>
+            <form (submit)="$event.preventDefault(); handleProductSubmit()" class="space-y-4">
+              <div class="grid grid-cols-2 gap-4 text-xs">
+                <div>
+                  <label class="block text-slate-400 font-bold mb-1">Product Name</label>
+                  <input type="text" required [(ngModel)]="name" name="name" class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-white" />
+                </div>
+                <div>
+                  <label class="block text-slate-400 font-bold mb-1">SKU Code</label>
+                  <input type="text" required [(ngModel)]="sku" name="sku" class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-white" />
+                </div>
+                <div>
+                  <label class="block text-slate-400 font-bold mb-1">Base Price (USD)</label>
+                  <input type="number" required [(ngModel)]="price" name="price" class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-white" />
+                </div>
+                <div>
+                  <label class="block text-slate-400 font-bold mb-1">Image URL</label>
+                  <input type="text" [(ngModel)]="imageUrl" name="imageUrl" class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-white" />
+                </div>
+                <div>
+                  <label class="block text-slate-400 font-bold mb-1">Category</label>
+                  <select [(ngModel)]="selectedCat" name="selectedCat" class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-slate-300">
+                    <option value="">Select Category</option>
+                    @for (c of categories(); track c.id) {
+                      <option [value]="c.id">{{ c.name }}</option>
+                    }
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-slate-400 font-bold mb-1">Brand</label>
+                  <select [(ngModel)]="selectedBrand" name="selectedBrand" class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-slate-300">
+                    <option value="">Select Brand</option>
+                    @for (b of brands(); track b.id) {
+                      <option [value]="b.id">{{ b.name }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 font-bold mb-1">Description</label>
+                <textarea required [(ngModel)]="description" name="description" class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-xs text-white h-20"></textarea>
+              </div>
+              <div class="flex items-center gap-2">
+                <input type="checkbox" [(ngModel)]="active" name="active" id="active" class="bg-slate-950 rounded border-slate-800 text-indigo-650" />
+                <label for="active" class="text-xs text-slate-300 font-bold cursor-pointer">Active and Buyable</label>
+              </div>
+              <div class="flex gap-2">
+                <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded text-xs transition cursor-pointer border-none">Save SKU Settings</button>
+                <button type="button" (click)="resetForm()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-205 font-bold rounded text-xs transition cursor-pointer border-none">Cancel</button>
+              </div>
+            </form>
+          </div>
+        }
+
+        <!-- Product Listing Grid -->
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase font-black tracking-wider text-[10px]">
+                  <th class="py-3 pr-4">Product Name</th>
+                  <th class="py-3 px-4">SKU Code</th>
+                  <th class="py-3 px-4">Category</th>
+                  <th class="py-3 px-4">Price</th>
+                  <th class="py-3 px-4">Stock</th>
+                  <th class="py-3 pl-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-850">
+                @for (p of products(); track p.id) {
+                  <tr class="text-slate-800 dark:text-slate-200">
+                    <td class="py-3 pr-4 font-bold">{{ p.name }}</td>
+                    <td class="py-3 px-4"><code class="text-indigo-650 dark:text-indigo-400 font-bold">{{ p.sku }}</code></td>
+                    <td class="py-3 px-4">{{ p.categoryName }}</td>
+                    <td class="py-3 px-4 font-black">{{ currencyService.formatPrice(p.price) }}</td>
+                    <td class="py-3 px-4">
+                      <span [class]="'text-[10px] px-2 py-0.5 rounded font-extrabold ' + (
+                        p.stockLevel > 10 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                      )">{{ p.stockLevel }} Items</span>
+                    </td>
+                    <td class="py-3 pl-4 flex gap-2">
+                      <button (click)="handleEditProduct(p)" class="text-indigo-650 dark:text-indigo-450 hover:underline cursor-pointer bg-transparent border-none text-xs">Edit</button>
+                      <button (click)="handleDeleteProduct(p.id)" class="text-rose-500 hover:underline cursor-pointer bg-transparent border-none text-xs">Deactivate</button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (activeTab() === 'reviews') {
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
+        <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Customer Submissions Awaiting Moderation</h3>
+        @if (pendingReviews().length === 0) {
+          <p class="text-xs text-slate-500">All submitted feedback comments have been cleared.</p>
+        } @else {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @for (r of pendingReviews(); track r.id) {
+              <div class="bg-slate-50 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-850 flex flex-col justify-between gap-3">
+                <div class="space-y-2">
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="font-bold text-slate-800 dark:text-slate-100">{{ r.customer.firstName }} {{ r.customer.lastName }}</span>
+                    <span class="text-yellow-500">⭐ {{ r.rating }} / 5</span>
+                  </div>
+                  <p class="text-slate-600 dark:text-slate-450 text-xs italic">"{{ r.reviewText }}"</p>
+                </div>
+                <div class="border-t border-slate-100 dark:border-slate-900 pt-3 flex justify-between items-center text-[10px] uppercase font-bold text-slate-500">
+                  <span>SKU: {{ r.product.name }}</span>
+                  <button (click)="handleApproveReview(r.id)" class="px-3.5 py-1.5 bg-indigo-650 hover:bg-indigo-755 text-white font-bold rounded-lg transition border-none cursor-pointer">Approve Feedback</button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    @if (activeTab() === 'logs') {
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
+        <h3 class="font-extrabold text-base text-slate-900 dark:text-white">System Security Action Timeline</h3>
+        <div class="space-y-3.5">
+          @for (log of auditLogs(); track log.id) {
+            <div class="flex gap-4 text-xs bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-850">
+              <span class="text-indigo-650 dark:text-indigo-400 font-extrabold w-36 flex-shrink-0">{{ log.timestamp.substring(11, 19) }}</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-202 w-28 flex-shrink-0">User: {{ log.username }}</span>
+              <span class="text-slate-655 dark:text-slate-400 flex-grow">{{ log.action }}</span>
+            </div>
+          }
+          @if (auditLogs().length === 0) {
+            <p class="text-xs text-slate-500">No operational audit logs cataloged.</p>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>

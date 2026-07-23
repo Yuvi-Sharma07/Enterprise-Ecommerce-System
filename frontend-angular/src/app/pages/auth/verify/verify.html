@@ -1,0 +1,15 @@
+<div class="min-h-[70vh] flex items-center justify-center px-4">
+  <div class="glass max-w-md w-full p-8 rounded-2xl shadow-2xl text-center space-y-4">
+    <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Email Verification</h2>
+    <p [class]="'p-4 rounded-lg font-medium ' + (
+      status() === 'verifying' ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300' :
+      status() === 'success' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' :
+      'bg-rose-500/15 text-rose-600 dark:text-rose-400'
+    )">
+      {{ message() }}
+    </p>
+    @if (status() !== 'verifying') {
+      <a routerLink="/login" class="inline-block mt-4 text-indigo-650 dark:text-indigo-400 hover:underline">Go to Login page &rarr;</a>
+    }
+  </div>
+</div>

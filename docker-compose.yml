@@ -45,5 +45,14 @@ services:
     depends_on:
       - backend
 
+  frontend-angular:
+    build: ./frontend-angular
+    container_name: ecomm_frontend_angular
+    ports:
+      - "81:80"
+    depends_on:
+      - backend
+
+
 volumes:
   postgres_data:

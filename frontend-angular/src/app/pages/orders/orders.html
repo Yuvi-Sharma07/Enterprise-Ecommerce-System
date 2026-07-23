@@ -1,0 +1,104 @@
+<div class="max-w-5xl mx-auto px-4 py-8 space-y-8 text-slate-850 dark:text-slate-200">
+  <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">Your Order History</h2>
+
+  <div class="space-y-6">
+    @if (orders().length === 0) {
+      <p class="text-slate-500 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl text-center shadow-sm">
+        You haven't placed any orders yet.
+      </p>
+    } @else {
+      @for (o of orders(); track o.id) {
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm transition-colors duration-200">
+          
+          <!-- Order Header -->
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 dark:border-slate-800 pb-3 gap-3">
+            <div>
+              <span class="text-[10px] text-slate-505 font-bold block uppercase tracking-wider">Order ID</span>
+              <span class="font-extrabold text-slate-900 dark:text-white">#{{ o.id }}</span>
+            </div>
+            <div class="flex flex-wrap gap-4 items-center">
+              <div class="text-left sm:text-right">
+                <span class="text-[10px] text-slate-500 font-bold block uppercase tracking-wider">Date</span>
+                <span class="text-slate-600 dark:text-slate-300 font-medium text-xs">{{ o.createdAt.substring(0, 10) }}</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-500 font-bold block uppercase tracking-wider text-left sm:text-right">Total Paid</span>
+                <span class="text-indigo-600 dark:text-indigo-400 font-black text-xs">{{ currencyService.formatPrice(o.totalAmount) }}</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-500 font-bold block uppercase tracking-wider text-left sm:text-right">Status</span>
+                <span [class]="'text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ' + (
+                  o.status === 'CANCELLED' || o.status === 'REFUNDED' ? 'bg-rose-500/10 text-rose-605 dark:text-rose-400' :
+                  o.status === 'DELIVERED' || o.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
+                  'bg-yellow-500/10 text-yellow-600 dark:text-yellow-450'
+                )">
+                  {{ o.status }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Items in Order -->
+          <div class="space-y-2">
+            @for (item of o.items; track item.id) {
+              <div class="flex justify-between text-xs text-slate-600 dark:text-slate-300">
+                <span>{{ item.productName }} <span class="text-slate-450 dark:text-slate-500 font-semibold">x{{ item.quantity }}</span></span>
+                <span class="font-bold text-slate-700 dark:text-slate-400">{{ currencyService.formatPrice(item.price * item.quantity) }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Timeline Status -->
+          <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl space-y-4 border border-slate-202 dark:border-slate-850">
+            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block flex items-center gap-1">
+              <svg class="w-4 h-4 text-indigo-500 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Tracking Status Timeline
+            </span>
+            <div class="flex items-center justify-between overflow-x-auto py-2 pr-4 space-x-4 min-w-max">
+              @for (step of ['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'COMPLETED']; track step; let idx = $index) {
+                <div class="flex items-center space-x-2">
+                  <div [class]="'w-3 h-3 rounded-full border-2 ' + (
+                    o.status === step ? 'bg-indigo-650 dark:bg-indigo-500 border-indigo-400 scale-125' :
+                    getStepIndex(o.status) >= idx ? 'bg-emerald-500 border-emerald-400' : 'bg-slate-200 dark:bg-slate-800 border-slate-350 dark:border-slate-700'
+                  )"></div>
+                  <span [class]="'text-[9px] font-bold tracking-wide uppercase ' + (
+                    o.status === step ? 'text-indigo-600 dark:text-indigo-500 font-black' : 
+                    getStepIndex(o.status) >= idx ? 'text-emerald-600 dark:text-emerald-450' : 'text-slate-400 dark:text-slate-500'
+                  )">
+                    {{ step }}
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Actions Footer -->
+          <div class="flex justify-end gap-3 pt-2">
+            @if (o.trackingNumber) {
+              <span class="text-[10px] text-slate-500 font-medium self-center">Tracking: <code class="text-indigo-600 dark:text-indigo-400">{{ o.trackingNumber }}</code></span>
+            }
+            
+            @if (o.status === 'PENDING' || o.status === 'CONFIRMED') {
+              <button
+                (click)="requestCancel(o.id)"
+                class="px-4 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 rounded-lg text-xs font-bold transition cursor-pointer"
+              >
+                Request Cancel
+              </button>
+            }
+
+            @if (o.status === 'DELIVERED' || o.status === 'COMPLETED') {
+              <button
+                (click)="requestReturn(o.id)"
+                class="px-4 py-1.5 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600 dark:text-yellow-450 border border-yellow-500/20 rounded-lg text-xs font-bold transition cursor-pointer"
+              >
+                File Return
+              </button>
+            }
+          </div>
+
+        </div>
+      }
+    }
+  </div>
+</div>

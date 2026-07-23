@@ -1,0 +1,140 @@
+<div class="space-y-8 px-6 py-8 text-slate-800 dark:text-slate-200">
+  <!-- Title -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white">Procurement & Suppliers</h2>
+      <p class="text-slate-500 dark:text-slate-400 text-sm">Fulfill warehouse restock purchase orders and log logistics tracking</p>
+    </div>
+    <button
+      (click)="selectedSupplierId.set(null); name=''; contactEmail=''; phone=''; address=''; showForm.set(!showForm());"
+      class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-lg text-xs transition cursor-pointer text-white border-none"
+    >
+      Register Supplier Profile
+    </button>
+  </div>
+
+  @if (showForm()) {
+    <form (submit)="$event.preventDefault(); handleSupplierSubmit()" class="glass p-6 rounded-2xl max-w-lg space-y-4">
+      <h3 class="text-md font-bold text-emerald-400 uppercase tracking-wide">Supplier Settings</h3>
+      <div class="grid grid-cols-2 gap-4 text-xs font-semibold">
+        <div>
+          <label class="block text-slate-400 mb-1">Company Name</label>
+          <input type="text" required [(ngModel)]="name" name="name" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Email</label>
+          <input type="email" required [(ngModel)]="contactEmail" name="email" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Phone</label>
+          <input type="text" required [(ngModel)]="phone" name="phone" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Physical Address</label>
+          <input type="text" required [(ngModel)]="address" name="address" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" />
+        </div>
+      </div>
+      <button type="submit" class="px-5 py-2.5 bg-emerald-650 hover:bg-emerald-500 text-white font-bold rounded text-xs transition cursor-pointer border-none">Save Supplier Profile</button>
+    </form>
+  }
+
+  <!-- Layout Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Left column: Supplier profiles list -->
+    <div class="lg:col-span-1 space-y-6">
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
+        <h3 class="text-xs font-bold text-slate-550 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2">Supplier Accounts</h3>
+        <div class="space-y-3">
+          @for (s of suppliers(); track s.id) {
+            <div
+              (click)="selectedSupplierId.set(s.id); startEditSupplier(s);"
+              [class]="'p-4 rounded-xl border cursor-pointer transition flex flex-col gap-2 ' + (
+                selectedSupplierId() === s.id 
+                  ? 'bg-emerald-500/10 border-emerald-500 text-emerald-600 dark:text-emerald-400' 
+                  : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-850 hover:border-emerald-500/30'
+              )"
+            >
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-extrabold">{{ s.name }}</span>
+                <span class="text-[9px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded font-extrabold uppercase">Verified</span>
+              </div>
+              <div class="space-y-1 text-[10px] text-slate-500 font-semibold">
+                <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg> {{ s.contactEmail }}</span>
+                <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg> {{ s.phone }}</span>
+                <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg> {{ s.address }}</span>
+              </div>
+              <button (click)="startEditSupplier(s); showForm.set(true);" class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold hover:underline text-left mt-1 cursor-pointer bg-transparent border-none">Edit Profile Credentials</button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: Allocated Purchase Orders list -->
+    <div class="lg:col-span-2 space-y-6">
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
+        <h3 class="font-extrabold text-base text-slate-909 dark:text-white">Assigned Procurement Purchase Orders</h3>
+        <div class="space-y-4">
+          @for (po of supplierPOs(); track po.id) {
+            <div class="bg-slate-50 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-850 flex justify-between items-center">
+              <div class="space-y-1">
+                <span class="text-[10px] bg-indigo-500/10 text-indigo-650 dark:text-indigo-400 px-2 py-0.5 rounded font-extrabold tracking-wide uppercase">PO #{{ po.id }}</span>
+                <span class="text-sm font-bold text-slate-800 dark:text-white block mt-1.5">{{ po.product.name }} &bull; Quantity: {{ po.quantity }} units</span>
+                <span class="text-[10px] text-slate-500 block">Deliver to Routing: {{ po.warehouse.name }}</span>
+                @if (po.trackingNumber) {
+                  <span class="text-[10px] text-slate-500 block font-medium">Tracking Number: <code class="text-indigo-655 dark:text-indigo-400">{{ po.trackingNumber }}</code></span>
+                }
+              </div>
+              
+              <div class="text-right space-y-2">
+                <span [class]="'text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded block text-center ' + (
+                  po.status === 'DELIVERED' || po.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
+                  po.status === 'SHIPPED' ? 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400' :
+                  'bg-yellow-500/10 text-yellow-600 dark:text-yellow-450 animate-pulse'
+                )">
+                  {{ po.status }}
+                </span>
+
+                @if (po.status === 'APPROVED' || po.status === 'PENDING') {
+                  <button (click)="openShipModal(po.id)" class="px-4 py-1.5 bg-emerald-650 hover:bg-emerald-500 text-white font-bold rounded-lg text-[10px] transition cursor-pointer border-none uppercase tracking-wider">Log Shipment Transit</button>
+                }
+              </div>
+            </div>
+          }
+          @if (supplierPOs().length === 0) {
+            <p class="text-xs text-slate-500">No purchase orders assigned to the selected supplier.</p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shipment Transit Modal -->
+  @if (selectedPoId()) {
+    <div class="fixed inset-0 bg-slate-950/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-xl text-slate-800 dark:text-slate-200 relative overflow-hidden transition-colors duration-200">
+        <div class="flex items-center gap-2 border-b border-slate-202 dark:border-slate-850 pb-3">
+          <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Log Shipment Transit</h3>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Enter a package tracking identification tag to dispatch the restock inventory shipment:</p>
+        
+        <div class="space-y-3">
+          <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Logistics Serial Code</label>
+          <input 
+            type="text" 
+            [(ngModel)]="trackingNumber" 
+            placeholder="E.g. TRK-NYC-882200" 
+            class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-350 dark:border-slate-800 rounded-lg p-2.5 text-xs text-slate-900 dark:text-white focus:outline-none" 
+          />
+        </div>
+
+        <div class="flex gap-2">
+          <button (click)="handleShipPO(selectedPoId()!)" class="w-1/2 py-2 bg-emerald-650 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs transition cursor-pointer border-none">Dispatch</button>
+          <button (click)="selectedPoId.set(null)" class="w-1/2 py-2 bg-slate-105 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-750 dark:text-slate-200 font-bold rounded-lg text-xs transition border border-slate-200 dark:border-slate-700 cursor-pointer">Cancel</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

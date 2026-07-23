@@ -1,0 +1,119 @@
+<div class="max-w-5xl mx-auto px-4 py-8 space-y-8 text-slate-800 dark:text-slate-200">
+  <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">Your Shopping Cart</h2>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Cart items list -->
+    <div class="lg:col-span-2 space-y-6">
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
+        <h3 class="text-xs font-bold text-indigo-650 dark:text-indigo-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2">
+          Active Items ({{ cartService.cartItems().length }})
+        </h3>
+        
+        @if (cartService.cartItems().length === 0) {
+          <p class="text-slate-500 text-xs">Your shopping cart is currently empty.</p>
+        } @else {
+          <div class="space-y-4">
+            @for (item of cartService.cartItems(); track item.id) {
+              <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-850 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                  <img
+                    [src]="item.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'"
+                    [alt]="item.productName"
+                    class="w-16 h-16 object-cover rounded-lg border border-slate-200 dark:border-slate-800"
+                  />
+                  <div>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-sm">
+                      <a [routerLink]="['/product', item.productId]" class="hover:underline">{{ item.productName }}</a>
+                    </h4>
+                    <span class="text-indigo-605 dark:text-indigo-400 text-xs font-bold">{{ currencyService.formatPrice(item.price) }}</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                  <div class="flex items-center bg-white dark:bg-slate-950 border border-slate-250 dark:border-slate-800 rounded-lg overflow-hidden">
+                    <button
+                      (click)="updateQuantity(item.productId, item.quantity - 1)"
+                      class="px-2.5 py-1 text-slate-500 hover:text-slate-800 dark:hover:text-white transition cursor-pointer bg-transparent border-none"
+                    >
+                      -
+                    </button>
+                    <span class="px-3 py-1 text-slate-800 dark:text-white text-xs font-semibold">{{ item.quantity }}</span>
+                    <button
+                      (click)="updateQuantity(item.productId, item.quantity + 1)"
+                      class="px-2.5 py-1 text-slate-500 hover:text-slate-800 dark:hover:text-white transition cursor-pointer bg-transparent border-none"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <button (click)="toggleSaveForLater(item.productId)" class="text-xs text-indigo-650 dark:text-indigo-400 hover:underline cursor-pointer bg-transparent border-none">Save Later</button>
+                  <button (click)="removeItem(item.productId)" class="text-xs text-rose-500 hover:underline cursor-pointer bg-transparent border-none">Remove</button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Saved Items -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
+        <h3 class="text-xs font-bold text-slate-700 dark:text-slate-350 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2">
+          Saved For Later ({{ cartService.savedItems().length }})
+        </h3>
+        
+        @if (cartService.savedItems().length === 0) {
+          <p class="text-slate-500 text-xs">No items saved for later.</p>
+        } @else {
+          <div class="space-y-4">
+            @for (item of cartService.savedItems(); track item.id) {
+              <div class="bg-slate-55 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-850 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                  <img
+                    [src]="item.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'"
+                    [alt]="item.productName"
+                    class="w-12 h-12 object-cover rounded-lg border border-slate-200 dark:border-slate-800"
+                  />
+                  <div>
+                    <h4 class="font-bold text-slate-805 dark:text-white text-sm">{{ item.productName }}</h4>
+                    <span class="text-indigo-650 dark:text-indigo-400 text-xs font-bold">{{ currencyService.formatPrice(item.price) }}</span>
+                  </div>
+                </div>
+                <div class="flex space-x-3">
+                  <button (click)="toggleSaveForLater(item.productId)" class="text-xs text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer bg-transparent border-none">Move to Cart</button>
+                  <button (click)="removeItem(item.productId)" class="text-xs text-rose-500 hover:underline cursor-pointer bg-transparent border-none">Delete</button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Order Summary Card -->
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl h-fit space-y-6 shadow-sm">
+      <h3 class="text-lg font-bold text-slate-850 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3">Subtotal Summary</h3>
+      <div class="space-y-3">
+        <div class="flex justify-between text-slate-500 dark:text-slate-400 text-xs">
+          <span>Items Total</span>
+          <span>{{ currencyService.formatPrice(cartService.totalAmount()) }}</span>
+        </div>
+        <div class="flex justify-between text-slate-500 dark:text-slate-400 text-xs">
+          <span>Standard Shipping</span>
+          <span class="text-emerald-600 dark:text-emerald-400 font-bold">FREE</span>
+        </div>
+        <div class="flex justify-between text-slate-900 dark:text-white font-extrabold text-base border-t border-slate-200 dark:border-slate-800 pt-3">
+          <span>Final Total</span>
+          <span>{{ currencyService.formatPrice(cartService.totalAmount()) }}</span>
+        </div>
+      </div>
+
+      <button
+        [disabled]="cartService.cartItems().length === 0"
+        (click)="navigateToCheckout()"
+        class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm cursor-pointer border-none"
+      >
+        Proceed to Secure Checkout
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </button>
+    </div>
+  </div>
+</div>

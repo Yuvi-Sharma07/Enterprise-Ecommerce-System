@@ -1,0 +1,528 @@
+<div class="space-y-10 px-4">
+  
+  <!-- 1. Hero Search & Class Header -->
+  <div class="text-center space-y-4 max-w-4xl mx-auto py-6">
+    <span class="text-[10px] uppercase font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full tracking-wider">Enterprise Logistics Hub</span>
+    <h2 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl">Global Inventory Supply Catalog</h2>
+    <p class="text-sm text-slate-500 dark:text-slate-400">Search products, inspect warehouses, or query artificial intelligence support:</p>
+
+    <!-- Search Tab switchers -->
+    <div class="flex flex-wrap justify-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-4 max-w-lg mx-auto text-xs font-bold">
+      <button 
+        (click)="selectTab('products')"
+        [class]="'px-4 py-2 rounded-xl transition cursor-pointer ' + (searchTab() === 'products' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-550 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900')"
+      >
+        🔍 Search Products
+      </button>
+      <button 
+        (click)="selectTab('manufacturers')"
+        [class]="'px-4 py-2 rounded-xl transition cursor-pointer ' + (searchTab() === 'manufacturers' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-550 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900')"
+      >
+        🏢 Manufacturers
+      </button>
+      <button 
+        (click)="selectTab('worldwide')"
+        [class]="'px-4 py-2 rounded-xl transition cursor-pointer ' + (searchTab() === 'worldwide' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-550 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900')"
+      >
+        🌍 Logistics Hubs
+      </button>
+      <button 
+        (click)="selectTab('ai')"
+        [class]="'px-4 py-2 rounded-xl transition cursor-pointer ' + (searchTab() === 'ai' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-550 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900')"
+      >
+        ✨ AI Natural Search
+      </button>
+    </div>
+
+    <!-- AI Search input -->
+    @if (searchTab() === 'ai') {
+      <div class="max-w-2xl mx-auto space-y-3.5 bg-indigo-500/5 p-5 rounded-2xl border border-indigo-500/10">
+        <label class="block text-[10px] uppercase font-black text-indigo-600 dark:text-indigo-400 tracking-wider text-left">Ask LLM Product Finder</label>
+        <div class="flex gap-2">
+          <input 
+            type="text"
+            #aiInput
+            placeholder="Show me ergonomic keyboards under $150 or sport sneakers..."
+            class="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-indigo-500 text-slate-900 dark:text-white"
+          />
+          <button 
+            (click)="handleAISearch(aiInput.value)"
+            [disabled]="aiSearching()"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl text-xs transition cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+          >
+            @if (aiSearching()) {
+              <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 6.578M3 20v-5h.581"/></svg>
+            } @else {
+              Search
+            }
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-1.5 justify-start text-[9.5px] uppercase font-bold text-slate-450 dark:text-slate-500">
+          <span>Popular queries:</span>
+          <button (click)="aiInput.value = 'Running shoes for women'; handleAISearch('Running shoes for women')" class="hover:text-indigo-500 font-bold transition">👟 Shoes</button> &middot;
+          <button (click)="aiInput.value = 'Mechanical keyboards'; handleAISearch('Mechanical keyboards')" class="hover:text-indigo-500 font-bold transition">⌨️ Keyboards</button> &middot;
+          <button (click)="aiInput.value = 'Compact kitchen blenders'; handleAISearch('Compact kitchen blenders')" class="hover:text-indigo-500 font-bold transition">🍹 Blenders</button>
+        </div>
+      </div>
+    } @else {
+      <!-- Rounded Indigo Search Bar -->
+      <div class="max-w-3xl mx-auto relative mt-4 border-2 border-indigo-600 dark:border-indigo-500 rounded-full bg-white dark:bg-slate-950 p-1 flex items-center shadow-md dark:shadow-indigo-500/5 transition-colors duration-200">
+        <div class="flex items-center space-x-2 pl-4 text-slate-450 dark:text-slate-500">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <span class="text-xs text-slate-300 dark:text-slate-700">|</span>
+        </div>
+        
+        <input
+          type="text"
+          [ngModel]="query()"
+          (ngModelChange)="query.set($event)"
+          class="w-full bg-transparent border-none pl-2 pr-36 py-2.5 text-slate-900 dark:text-white placeholder-slate-450 dark:placeholder-slate-500 focus:outline-none text-sm"
+          placeholder="Search thousands of buyable products, SKU serials..."
+        />
+
+        <!-- Camera Mock Icon -->
+        <button 
+          (click)="showImageSearchModal.set(true)"
+          class="absolute right-36 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition flex items-center gap-1.5 text-xs font-semibold pr-3 border-r border-slate-200 dark:border-slate-800 focus:outline-none"
+        >
+          <svg class="w-4.5 h-4.5 text-indigo-500 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span class="hidden sm:inline">Image Search</span>
+        </button>
+
+        <button class="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold px-7 py-2.5 rounded-full text-sm transition flex items-center gap-1 ml-auto cursor-pointer border-none">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg> Search
+        </button>
+      </div>
+    }
+
+    <p class="text-slate-500 dark:text-slate-400 text-xs mt-2">Welcome to rb cart. Browse thousands of buyable products across our worldwide logistics warehouses.</p>
+  </div>
+
+  <!-- 2. Three Column Layout: Sidebar Category + Products + Widgets -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Left Side Category Navigation -->
+    <div class="lg:col-span-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-5 rounded-2xl h-fit space-y-6 shadow-sm transition-colors duration-200">
+      <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+        <svg class="w-4 h-4 text-indigo-500 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg> Categories
+      </h3>
+      <div class="space-y-3.5 text-xs text-slate-550 dark:text-slate-400 font-semibold">
+        @for (c of categories(); track c.id) {
+          <div 
+            (click)="toggleCategory(c.id)"
+            [class]="'flex justify-between items-center p-2.5 rounded-lg cursor-pointer transition ' + (
+              selectedCat() === c.id.toString() ? 'bg-indigo-500/10 text-indigo-605 dark:text-indigo-400' : 'hover:bg-slate-100 dark:hover:bg-slate-800/40 hover:text-slate-950 dark:hover:text-white'
+            )"
+          >
+            <span>{{ c.name }}</span>
+            <span class="text-slate-400 dark:text-slate-650 font-bold">&rarr;</span>
+          </div>
+        }
+      </div>
+
+      <!-- Price Bounds Filter -->
+      <div class="border-t border-slate-200 dark:border-slate-800 pt-5 space-y-4">
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Filter Price Bounds</label>
+        <div class="grid grid-cols-2 gap-2">
+          <input
+            type="number"
+            placeholder="Min"
+            [ngModel]="minPrice()"
+            (ngModelChange)="minPrice.set($event)"
+            class="bg-slate-50 dark:bg-slate-950 border border-slate-350 dark:border-slate-800 rounded p-2 text-xs text-slate-900 dark:text-white focus:outline-none"
+          />
+          <input
+            type="number"
+            placeholder="Max"
+            [ngModel]="maxPrice()"
+            (ngModelChange)="maxPrice.set($event)"
+            class="bg-slate-50 dark:bg-slate-950 border border-slate-350 dark:border-slate-800 rounded p-2 text-xs text-slate-900 dark:text-white focus:outline-none"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Main Catalog Grid -->
+    <div class="lg:col-span-6 space-y-8">
+      @if (searchTab() === 'manufacturers') {
+        <div class="space-y-6">
+          <div class="border-b border-slate-200 dark:border-slate-800 pb-3">
+            <h3 class="font-extrabold text-lg text-slate-900 dark:text-white flex items-center gap-1.5">
+              🏢 Verified Manufacturers Directory
+            </h3>
+            <p class="text-xs text-slate-550 mt-1">Audit certifications and factory locations for connected suppliers:</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4">
+            @for (m of filteredManufacturers; track m.name) {
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-5 rounded-2xl shadow-sm hover:border-indigo-500/30 transition space-y-3">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="text-[10px] bg-indigo-500/10 text-indigo-650 dark:text-indigo-400 px-2 py-0.5 rounded font-extrabold tracking-wide uppercase">{{ m.category }}</span>
+                    <h4 class="font-bold text-base text-slate-900 dark:text-white mt-1.5">{{ m.name }}</h4>
+                    <span class="text-xs text-slate-500 block mt-0.5">🏭 Main Office: {{ m.location }}</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-xs font-bold text-slate-850 dark:text-slate-200 block">⭐ {{ m.rating }} / 5.0</span>
+                    <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block mt-1">Verified Supplier</span>
+                  </div>
+                </div>
+                <div class="border-t border-slate-100 dark:border-slate-850 pt-3 flex flex-wrap gap-2 text-[10px] uppercase font-bold text-slate-450">
+                  <span>Warehouse Links:</span>
+                  @for (w of m.activeWarehouses; track w) {
+                    <span class="bg-slate-50 dark:bg-slate-950 px-2 py-0.5 rounded border border-slate-202 dark:border-slate-800 text-slate-700 dark:text-slate-300">{{ w }}</span>
+                  }
+                </div>
+              </div>
+            }
+            @if (filteredManufacturers.length === 0) {
+              <div class="text-center py-10 text-slate-400">No verified manufacturers matched your query.</div>
+            }
+          </div>
+        </div>
+      } @else if (searchTab() === 'worldwide') {
+        <div class="space-y-6">
+          <div class="border-b border-slate-200 dark:border-slate-800 pb-3">
+            <h3 class="font-extrabold text-lg text-slate-900 dark:text-white flex items-center gap-1.5">
+              🌍 Global Warehouse Logistics Network
+            </h3>
+            <p class="text-xs text-slate-550 mt-1">Live capacity loads and transit routing lines across international fulfillment centers:</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4">
+            @for (w of filteredWarehouses; track w.code) {
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-5 rounded-2xl shadow-sm hover:border-indigo-500/30 transition space-y-4">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="text-[10px] bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 px-2 py-0.5 rounded font-extrabold tracking-wide uppercase">{{ w.code }}</span>
+                    <h4 class="font-bold text-base text-slate-900 dark:text-white mt-1.5">{{ w.name }}</h4>
+                    <span class="text-xs text-slate-500 block mt-0.5">📍 Hub Location: {{ w.location }}</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-xs font-bold text-slate-850 dark:text-slate-200 block">{{ w.capacity }}</span>
+                    <span class="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold block mt-1">Live Tracking</span>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 border-t border-slate-100 dark:border-slate-855 pt-3 text-[11px] text-slate-500">
+                  <div>
+                    <span class="font-bold text-slate-700 dark:text-slate-350 block">Coordinates</span>
+                    <span>{{ w.coordinates }}</span>
+                  </div>
+                  <div>
+                    <span class="font-bold text-slate-700 dark:text-slate-355 block">Shipping Routes</span>
+                    <span>{{ w.shippingRoutes.join(', ') }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+            @if (filteredWarehouses.length === 0) {
+              <div class="text-center py-10 text-slate-400">No worldwide logistics hubs matched your query.</div>
+            }
+          </div>
+        </div>
+      } @else {
+        <!-- Products view -->
+        <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+          <span class="text-xs font-bold text-slate-505 dark:text-slate-400 uppercase tracking-wide">Found {{ products().length }} Products</span>
+          <select
+            [ngModel]="sortBy()"
+            (ngModelChange)="sortBy.set($event)"
+            class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded text-xs text-slate-800 dark:text-white p-1"
+          >
+            <option value="id">Sort: Relevance</option>
+            <option value="price">Sort: Price</option>
+            <option value="name">Sort: Name</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          @for (p of products(); track p.id) {
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden hover:border-indigo-500/30 hover:shadow-indigo-500/5 transition flex flex-col justify-between shadow-sm">
+              <div class="relative">
+                <img
+                  [src]="p.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'"
+                  [alt]="p.name"
+                  class="w-full h-44 object-cover border-b border-slate-200 dark:border-slate-800"
+                />
+                <button
+                  (click)="toggleWishlist(p.id)"
+                  [class]="'absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-800 transition border-none cursor-pointer ' + (
+                    wishlistIds().includes(p.id) ? 'text-rose-500' : 'text-slate-400'
+                  )"
+                >
+                  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+                </button>
+              </div>
+              <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+                <div>
+                  <span class="text-[10px] font-bold text-indigo-650 dark:text-indigo-400 uppercase tracking-wide">{{ p.categoryName }}</span>
+                  <h3 class="font-extrabold text-base text-slate-905 dark:text-white hover:text-indigo-650 dark:hover:text-indigo-400 transition cursor-pointer mt-1">
+                    <a [routerLink]="['/product', p.id]">{{ p.name }}</a>
+                  </h3>
+                  <p class="text-slate-500 dark:text-slate-400 text-xs line-clamp-2 mt-1">{{ p.description }}</p>
+                </div>
+                <div class="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800">
+                  <span class="text-lg font-black text-slate-900 dark:text-white">{{ currencyService.formatPrice(p.price) }}</span>
+                  <span [class]="'text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wider ' + (
+                    p.stockLevel > 0 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                  )">
+                    {{ p.stockLevel > 0 ? 'In Stock' : 'Out of Stock' }}
+                  </span>
+                </div>
+              </div>
+              @if (p.stockLevel > 0 && authService.currentUser()?.customerId) {
+                <button
+                  (click)="addItem(p.id, 1)"
+                  class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold transition flex items-center justify-center gap-1.5 text-xs cursor-pointer border-none"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg> Add to Cart
+                </button>
+              } @else {
+                <a
+                  [routerLink]="['/product', p.id]"
+                  class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-bold transition text-center text-xs block"
+                >
+                  View Details
+                </a>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages() > 1) {
+          <div class="flex items-center justify-center space-x-2 py-4">
+            <button
+              [disabled]="page() === 0"
+              (click)="page.set(page() - 1)"
+              class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold disabled:opacity-50 transition cursor-pointer"
+            >
+              Prev
+            </button>
+            <span class="text-slate-550 text-xs font-bold">Page {{ page() + 1 }} of {{ totalPages() }}</span>
+            <button
+              [disabled]="page() >= totalPages() - 1"
+              (click)="page.set(page() + 1)"
+              class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold disabled:opacity-50 transition cursor-pointer"
+            >
+              Next
+            </button>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Right Side Widgets -->
+    <div class="lg:col-span-3 space-y-6">
+      <!-- Frequently searched widget -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-5 rounded-2xl space-y-4 shadow-sm transition-colors duration-200">
+        <h3 class="text-xs font-bold text-slate-800 dark:text-slate-300 uppercase tracking-wide border-b border-slate-200 dark:border-slate-800 pb-2">Frequently Searched</h3>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3 bg-slate-55 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
+            <div class="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center text-indigo-650 dark:text-indigo-400 font-bold">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-800 dark:text-white block">Smart Watches</span>
+              <span class="text-[10px] text-slate-500">12k+ daily requests</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 bg-slate-55 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
+            <div class="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center text-cyan-600 dark:text-cyan-400 font-bold">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-800 dark:text-white block">Acoustic Earbuds</span>
+              <span class="text-[10px] text-slate-500">8k+ daily requests</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hot Picks Banner widget -->
+      <div class="relative rounded-2xl overflow-hidden h-64 border border-slate-202 dark:border-slate-800 flex flex-col justify-end p-5 shadow-sm">
+        <img 
+          src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600" 
+          alt="Promo Banner" 
+          class="absolute inset-0 w-full h-full object-cover brightness-50 dark:brightness-40"
+        />
+        <div class="relative z-10 space-y-2">
+          <span class="text-[10px] bg-indigo-600 dark:bg-indigo-500 text-white font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">Hot Picks</span>
+          <h4 class="font-extrabold text-lg text-white">Classic Apparel Fashion</h4>
+          <p class="text-xs text-slate-200 dark:text-slate-350">Up to 20% off with promo coupon codes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frequently Viewed Row -->
+  @if (frequentlyViewed().length > 0) {
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-6 rounded-2xl space-y-4 shadow-sm transition-colors duration-200">
+      <h3 class="text-sm font-bold text-slate-850 dark:text-slate-100 flex items-center gap-2">
+        <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg> Frequently Viewed Items
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        @for (fv of frequentlyViewed(); track fv.id) {
+          <div class="bg-slate-55 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-850 hover:border-indigo-500/20 transition flex items-center space-x-3">
+            <img
+              [src]="fv.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'"
+              [alt]="fv.name"
+              class="w-14 h-14 object-cover rounded-lg border border-slate-200 dark:border-slate-800"
+            />
+            <div class="min-w-0 flex-grow">
+              <a [routerLink]="['/product', fv.id]" class="block text-xs font-bold text-slate-800 dark:text-white hover:text-indigo-650 dark:hover:text-indigo-400 truncate">{{ fv.name }}</a>
+              <span class="text-[10px] text-slate-500 block truncate">{{ fv.brandName }}</span>
+              <span class="text-indigo-600 dark:text-indigo-400 font-bold text-xs block mt-0.5">{{ currencyService.formatPrice(fv.price) }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Floating Assistance Chatbot button -->
+  <div class="fixed bottom-6 right-6 flex flex-col space-y-3 z-50">
+    <button 
+      (click)="showAIChat.set(!showAIChat())"
+      class="p-3.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white rounded-full shadow-xl transition hover:scale-105 cursor-pointer focus:outline-none border-none"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+    </button>
+  </div>
+
+  <!-- Floating AI Chatbot overlay -->
+  @if (showAIChat()) {
+    <div class="fixed bottom-24 right-6 w-96 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl z-55 flex flex-col overflow-hidden transition-all duration-300 text-slate-800 dark:text-slate-200">
+      <!-- Header -->
+      <div class="p-4 bg-indigo-600 dark:bg-indigo-500 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          <div>
+            <span class="font-extrabold block text-xs">RB Cart AI Chatbot</span>
+            <span class="text-[10px] text-indigo-100 flex items-center gap-1 mt-0.5">
+              <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full inline-block animate-pulse"></span> Online &middot; Instant Help
+            </span>
+          </div>
+        </div>
+        <button 
+          (click)="showAIChat.set(false)"
+          class="text-white hover:text-slate-200 text-xs font-bold focus:outline-none cursor-pointer border-none bg-transparent"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Messages Area -->
+      <div class="p-4 flex-grow h-72 overflow-y-auto space-y-3.5 bg-slate-50 dark:bg-slate-950/40">
+        @for (m of chatMessages(); track $index) {
+          <div [class]="'flex ' + (m.sender === 'user' ? 'justify-end' : 'justify-start')">
+            <div 
+              [class]="'max-w-[80%] rounded-2xl p-3 text-xs shadow-sm ' + (
+                m.sender === 'user' 
+                  ? 'bg-indigo-600 text-white rounded-tr-none' 
+                  : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 rounded-tl-none border border-slate-200 dark:border-slate-800'
+              )"
+            >
+              {{ m.text }}
+            </div>
+          </div>
+        }
+        @if (isTyping()) {
+          <div class="flex justify-start">
+            <div class="bg-white dark:bg-slate-900 text-slate-500 rounded-2xl rounded-tl-none p-3 text-[11px] border border-slate-200 dark:border-slate-800 flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
+              <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+              <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Input area -->
+      <form 
+        (submit)="$event.preventDefault(); handleSendChat();"
+        class="p-3 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2"
+      >
+        <input
+          type="text"
+          [ngModel]="chatInput()"
+          (ngModelChange)="chatInput.set($event)"
+          name="chatInput"
+          placeholder="Ask about coupons, warehouse, orders..."
+          class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-250 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none"
+        />
+        <button 
+          type="submit"
+          class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition focus:outline-none cursor-pointer border-none"
+        >
+          Send
+        </button>
+      </form>
+    </div>
+  }
+
+  <!-- Interactive Mock Image Search Modal -->
+  @if (showImageSearchModal()) {
+    <div class="fixed inset-0 bg-slate-950/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-xl text-slate-800 dark:text-slate-200 relative overflow-hidden transition-colors duration-200">
+        
+        @if (analyzingImage()) {
+          <div class="py-12 flex flex-col items-center justify-center space-y-4 text-center">
+            <div class="w-12 h-12 rounded-full border-4 border-indigo-500/20 border-t-indigo-600 animate-spin"></div>
+            <span class="text-sm font-bold text-slate-900 dark:text-white animate-pulse">AI Computer Vision Classifier</span>
+            <p class="text-xs text-slate-550 dark:text-slate-400">Extracting feature vectors & matching against 1,000+ catalog SKUs...</p>
+          </div>
+        } @else {
+          <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-850 pb-3">
+            <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white">AI Image Classification Search</h3>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Drag & drop your product photo or select a quick sample below to scan the catalog using computer vision:</p>
+          
+          <!-- Drag and drop mock zone -->
+          <div 
+            (click)="analyzingImage.set(true); query.set('Keyboard'); showImageSearchModal.set(false); analyzingImage.set(false);"
+            class="border-2 border-dashed border-slate-350 dark:border-slate-800 hover:border-indigo-500 dark:hover:border-indigo-400 rounded-2xl p-8 text-center cursor-pointer transition bg-slate-55 dark:bg-slate-950/60"
+          >
+            <svg class="w-8 h-8 text-indigo-500 dark:text-indigo-400 mx-auto mb-2 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+            <span class="text-xs font-bold block text-slate-700 dark:text-slate-300">Drag photo here or browse files</span>
+            <span class="text-[10px] text-slate-400 dark:text-slate-500 block mt-1">Supports PNG, JPG up to 5MB</span>
+          </div>
+
+          <div class="space-y-2">
+            <span class="text-[10px] uppercase font-bold text-slate-450 dark:text-slate-500 block">Select Mock Sample Photo:</span>
+            <div class="grid grid-cols-3 gap-2">
+              <button
+                (click)="analyzingImage.set(true); query.set('Keyboard'); showImageSearchModal.set(false); analyzingImage.set(false);"
+                class="p-2 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-indigo-500 text-[10px] font-bold bg-slate-50 dark:bg-slate-950 transition-all text-slate-800 dark:text-slate-200 cursor-pointer"
+              >
+                ⌨️ Keyboard
+              </button>
+              <button
+                (click)="analyzingImage.set(true); query.set('Sneakers'); showImageSearchModal.set(false); analyzingImage.set(false);"
+                class="p-2 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-indigo-500 text-[10px] font-bold bg-slate-50 dark:bg-slate-955 transition-all text-slate-800 dark:text-slate-200 cursor-pointer"
+              >
+                👟 Sneakers
+              </button>
+              <button
+                (click)="analyzingImage.set(true); query.set('Blender'); showImageSearchModal.set(false); analyzingImage.set(false);"
+                class="p-2 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-indigo-500 text-[10px] font-bold bg-slate-50 dark:bg-slate-955 transition-all text-slate-800 dark:text-slate-200 cursor-pointer"
+              >
+                🍹 Blender
+              </button>
+            </div>
+          </div>
+
+          <button 
+            (click)="showImageSearchModal.set(false)"
+            class="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-750 dark:text-slate-200 font-bold rounded-xl text-xs transition border border-slate-200 dark:border-slate-700 cursor-pointer"
+          >
+            Cancel
+          </button>
+        }
+
+      </div>
+    </div>
+  }
+
+</div>

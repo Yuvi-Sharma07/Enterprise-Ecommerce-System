@@ -1,0 +1,6 @@
+<div [class]="'min-h-screen transition-colors duration-200 ' + (darkMode() ? 'dark bg-slate-955 text-slate-100' : 'bg-slate-50 text-slate-900')">
+  <app-navbar [darkMode]="darkMode()" (darkModeChange)="darkMode.set($event)"></app-navbar>
+  <main class="container mx-auto py-6">
+    <router-outlet></router-outlet>
+  </main>
+</div>
